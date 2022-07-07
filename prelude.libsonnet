@@ -5,7 +5,7 @@
       new(name, replicas, containers, podLabels={})::
         super.new(name, replicas, containers, podLabels)
         + super.metadata.withLabels({
-          'cloudflight.io/project': $.project,
+          'cloudflight.io/project': $._config.project,
         })
     },
   },

@@ -2,6 +2,8 @@
 + (import 'github.com/jsonnet-libs/k8s-libsonnet/1.23/main.libsonnet')
 + (import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.libsonnet')
 + {
-  project:: 'UNDEFINED',
+  _config+:: {
+    project:: 'UNDEFINED',
+  },
   extensions:: null
 }
