@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "dependencies": [
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/jsonnet-libs.git",
+          "subdir": "ksonnet-util"
+        }
+      },
+      "version": "ef0917ed205995de36494a848f57d7adcc610dbc",
+      "sum": "QiIOYQ0mdyVXStdPxu99M5CYGtYAXczWAC62EAQmWBM="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/jsonnet-libs/k8s-libsonnet.git",
+          "subdir": "1.23"
+        }
+      },
+      "version": "12ea89d1fa76e716565b2885492da3163e62dd90",
+      "sum": "Z9VXwuaMJhv2HgxLNiTuxdpJw3fErGZ2mS9yqOkOtXc="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/jsonnet-libs/kube-prometheus-libsonnet.git",
+          "subdir": "0.10"
+        }
+      },
+      "version": "5c7c3bbf1873a4d2d0c5ae5257c1120e779c5cd7",
+      "sum": "ooOWeK/v462Bsmpxx/AjM8XmskQ1GyRGylQ66TrB5RM="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/jsonnet-libs/openshift-libsonnet.git",
+          "subdir": "4.5"
+        }
+      },
+      "version": "21301758830e3f2c35e23712e2f131fc87f2ebc7",
+      "sum": "Bly8ommD8iCwlZZvEymCHekt/sfZmv38/eybVwq5F0Q="
+    }
+  ],
+  "legacyImports": false
+}
