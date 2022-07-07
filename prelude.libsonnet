@@ -1,4 +1,5 @@
 (import 'ksonnet-util/kausal.libsonnet') +
+(import 'utils.libsonnet') +
 {
   local appsExtentions = {
     deployment+: {
