@@ -1,4 +1,4 @@
-(import '../prelude.libsonnet') +
+local k = (import '../prelude.libsonnet');
 {
   _config+:: {
     redis: {
@@ -20,14 +20,14 @@
     },
   },
   redis: {
-    local deployment = $.apps.v1.deployment,
-    local container = $.core.v1.container,
-    local port = $.core.v1.containerPort,
-    local volumeMount = $.core.v1.volumeMount,
-    local volume = $.core.v1.volume,
-    local secret = $.core.v1.secret,
-    local cm = $.core.v1.configMap,
-    local pvc = $.core.v1.persistentVolumeClaim,
+    local deployment = k.apps.v1.deployment,
+    local container = k.core.v1.container,
+    local port = k.core.v1.containerPort,
+    local volumeMount = k.core.v1.volumeMount,
+    local volume = k.core.v1.volume,
+    local secret = k.core.v1.secret,
+    local cm = k.core.v1.configMap,
+    local pvc = k.core.v1.persistentVolumeClaim,
 
     local livenessProbe = container.livenessProbe.withFailureThreshold(5)
                           + container.livenessProbe.withInitialDelaySeconds(10)
@@ -96,9 +96,9 @@
                     volume.fromPersistentVolumeClaim('data', self.volume.metadata.name),
                   ])
                 ) else {}),
-    service: $.util.serviceFor(self.deployment),
-    serviceMonitor: $.monitoring.v1.serviceMonitor.new($._config.redis.name)
-                    + $.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
-                    + $.monitoring.v1.serviceMonitor.spec.withEndpoints([{ port: 'exporter-metrics' }]),
+    service: k.util.serviceFor(self.deployment),
+    serviceMonitor: k.monitoring.v1.serviceMonitor.new($._config.redis.name)
+                    + k.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
+                    + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ port: 'exporter-metrics' }]),
   },
 }

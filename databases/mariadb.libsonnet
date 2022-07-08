@@ -1,4 +1,4 @@
-(import '../prelude.libsonnet') +
+local k = import '../prelude.libsonnet';
 {
   _config+:: {
     mariadb: {
@@ -23,15 +23,15 @@
     },
   },
   mariadb: {
-    local deployment = $.apps.v1.deployment,
-    local container = $.core.v1.container,
-    local port = $.core.v1.containerPort,
-    local volumeMount = $.core.v1.volumeMount,
-    local volume = $.core.v1.volume,
-    local secret = $.core.v1.secret,
-    local cm = $.core.v1.configMap,
-    local pvc = $.core.v1.persistentVolumeClaim,
-    local is = $.image.v1.imageStream,
+    local deployment = k.apps.v1.deployment,
+    local container = k.core.v1.container,
+    local port = k.core.v1.containerPort,
+    local volumeMount = k.core.v1.volumeMount,
+    local volume = k.core.v1.volume,
+    local secret = k.core.v1.secret,
+    local cm = k.core.v1.configMap,
+    local pvc = k.core.v1.persistentVolumeClaim,
+    local is = k.image.v1.imageStream,
     volume: pvc.new($._config.mariadb.name)
             + pvc.spec.resources.withRequests({
               storage: $._config.mariadb.storage,
@@ -141,9 +141,9 @@
                   volume.fromPersistentVolumeClaim('data', self.volume.metadata.name),
                   volume.fromConfigMap('init', self.initScripts.metadata.name),
                 ]),
-    service: $.util.serviceFor(self.deployment),
-    serviceMonitor: $.monitoring.v1.serviceMonitor.new($._config.mariadb.name)
-                    + $.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
-                    + $.monitoring.v1.serviceMonitor.spec.withEndpoints([{ port: 'exporter-metrics' }]),
+    service: k.util.serviceFor(self.deployment),
+    serviceMonitor: k.monitoring.v1.serviceMonitor.new($._config.mariadb.name)
+                    + k.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
+                    + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ port: 'exporter-metrics' }]),
   },
 }

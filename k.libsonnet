@@ -3,7 +3,7 @@
 + (import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.libsonnet')
 + {
   _config+:: {
-    project:: 'UNDEFINED',
+    project:: null,
   },
   extensions:: null
 }

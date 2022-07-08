@@ -5,9 +5,9 @@
     deployment+: {
       new(name, replicas, containers, podLabels={})::
         super.new(name, replicas, containers, podLabels)
-        + super.metadata.withLabels({
+        + (if $._config.project != null then super.metadata.withLabels({
           'cloudflight.io/project': $._config.project,
-        })
+        }) else {})
     },
   },
   apps+: {
