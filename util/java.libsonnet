@@ -1,9 +1,8 @@
-(import 'ksonnet-util/kausal.libsonnet') +
 {
-  utils+:: {
+  withK(k):: {
     java+: {
       livenessProbe+: {
-        local lp = $.core.v1.container.livenessProbe,
+        local lp = k.core.v1.container.livenessProbe,
         new(port=8080): lp.withFailureThreshold(5)
                         + lp.withInitialDelaySeconds(30)
                         + lp.withPeriodSeconds(10)
@@ -12,7 +11,7 @@
                         + lp.tcpSocket.withPort(port),
       },
       readinessProbe+: {
-        local rp = $.core.v1.container.readinessProbe,
+        local rp = k.core.v1.container.readinessProbe,
         new(
           port=18080,
           path="/actuator/health"
@@ -25,8 +24,8 @@
            + rp.httpGet.withPath(path),
       },
       container+: {
-        local container = $.core.v1.container,
-        local port = $.core.v1.containerPort,
+        local container = k.core.v1.container,
+        local port = k.core.v1.containerPort,
         new(name,
             image,
             port=8080,
@@ -49,15 +48,15 @@
                 cpu: '500m',
                 memory: '1Gi',
               })
-              + $.utils.java.livenessProbe.new()
-              + $.utils.java.readinessProbe.new(),
+              + k.utils.java.livenessProbe.new()
+              + k.utils.java.readinessProbe.new(),
 
       },
       deployment+: {
-        local deployment = $.apps.v1.deployment,
+        local deployment = k.apps.v1.deployment,
         new(name,image,replicas=1,env={}):
           deployment.new(name, replicas, containers=[
-            $.utils.java.container.new(name,image,port=8080,env=env)
+            k.utils.java.container.new(name,image,port=8080,env=env)
           ])
       }
     }

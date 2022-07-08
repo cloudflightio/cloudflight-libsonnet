@@ -1,2 +1,5 @@
-(import 'ksonnet-util/kausal.libsonnet') +
-(import 'utils/main.libsonnet')
+(import 'ksonnet-util/kausal.libsonnet')
++ (import 'extensions/main.libsonnet')
++ {
+  util+: (import 'util/main.libsonnet').withK(self)
+}
