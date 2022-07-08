@@ -537,6 +537,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#obj-javacontainer" class="md-nav__link">
+    obj java.container
+  </a>
+  
+    <nav class="md-nav" aria-label="obj java.container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-javacontainernew" class="md-nav__link">
+    fn java.container.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-javadeployment" class="md-nav__link">
+    obj java.deployment
+  </a>
+  
+    <nav class="md-nav" aria-label="obj java.deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-javadeploymentnew" class="md-nav__link">
+    fn java.deployment.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#obj-javalivenessprobe" class="md-nav__link">
     obj java.livenessProbe
   </a>
@@ -638,22 +678,36 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../modules/java_application/" class="md-nav__link">
+        Java Applications
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_4_2">
+        <label class="md-nav__link" for="__nav_4_3">
           Databases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Databases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_4_2">
+        <label class="md-nav__title" for="__nav_4_3">
           <span class="md-nav__icon md-icon"></span>
           Databases
         </label>
@@ -667,6 +721,20 @@
     <li class="md-nav__item">
       <a href="../../modules/databases/mariadb/" class="md-nav__link">
         MariaDB Database Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../modules/databases/redis/" class="md-nav__link">
+        Redis Cache Module
       </a>
     </li>
   
@@ -747,6 +815,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#obj-javacontainer" class="md-nav__link">
+    obj java.container
+  </a>
+  
+    <nav class="md-nav" aria-label="obj java.container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-javacontainernew" class="md-nav__link">
+    fn java.container.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-javadeployment" class="md-nav__link">
+    obj java.deployment
+  </a>
+  
+    <nav class="md-nav" aria-label="obj java.deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-javadeploymentnew" class="md-nav__link">
+    fn java.deployment.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#obj-javalivenessprobe" class="md-nav__link">
     obj java.livenessProbe
   </a>
@@ -808,8 +916,16 @@
 <p>The util package contains ease of use functions to simplify working with kubernetes and jsonnet</p>
 <h2 id="index">Index</h2>
 <ul>
-<li><a href="#fn-routefor"><code>fn routeFor(port=18080, path='/actuator/health')</code></a></li>
+<li><a href="#fn-routefor"><code>fn routeFor(service, port=18080, path='/actuator/health', port='service.spec.ports[0].port')</code></a></li>
 <li><a href="#obj-java"><code>obj java</code></a></li>
+<li><a href="#obj-javacontainer"><code>obj java.container</code></a><ul>
+<li><a href="#fn-javacontainernew"><code>fn new(name, image, port=8080, actuatorPort='port+8080', env={})</code></a></li>
+</ul>
+</li>
+<li><a href="#obj-javadeployment"><code>obj java.deployment</code></a><ul>
+<li><a href="#fn-javadeploymentnew"><code>fn new(name, image, replicas=1, env={})</code></a></li>
+</ul>
+</li>
 <li><a href="#obj-javalivenessprobe"><code>obj java.livenessProbe</code></a><ul>
 <li><a href="#fn-javalivenessprobenew"><code>fn new(port=8080)</code></a></li>
 </ul>
@@ -821,20 +937,32 @@
 </ul>
 <h2 id="fields">Fields</h2>
 <h3 id="fn-routefor">fn routeFor</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nx">routeFor</span><span class="p">(</span><span class="nx">port</span><span class="o">=</span><span class="mf">18080</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="o">=</span><span class="s1">&#39;/actuator/health&#39;</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nx">routeFor</span><span class="p">(</span><span class="nx">service</span><span class="p">,</span><span class="w"> </span><span class="nx">port</span><span class="o">=</span><span class="mf">18080</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="o">=</span><span class="s1">&#39;/actuator/health&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">port</span><span class="o">=</span><span class="s1">&#39;service.spec.ports[0].port&#39;</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>routeFor constructs a openshift route to the specified service. It expects
 a value for the hostname and defaults to '/' for the path.</p>
 <h2 id="obj-java">obj java</h2>
 <p>java holds my functions related to java based applications</p>
+<h2 id="obj-javacontainer">obj java.container</h2>
+<h3 id="fn-javacontainernew">fn java.container.new</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">image</span><span class="p">,</span><span class="w"> </span><span class="nx">port</span><span class="o">=</span><span class="mf">8080</span><span class="p">,</span><span class="w"> </span><span class="nx">actuatorPort</span><span class="o">=</span><span class="s1">&#39;port+8080&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">env</span><span class="o">=</span><span class="p">{})</span><span class="w"></span>
+</code></pre></div>
+<p>constructs a container with reccomended settings for Java/Spring Boot applications.
+Includes liveness- and readiness probes, activates the <code>kubernetes</code> spring profile
+and sets sensible resource defaults.</p>
+<h2 id="obj-javadeployment">obj java.deployment</h2>
+<h3 id="fn-javadeploymentnew">fn java.deployment.new</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">image</span><span class="p">,</span><span class="w"> </span><span class="nx">replicas</span><span class="o">=</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">env</span><span class="o">=</span><span class="p">{})</span><span class="w"></span>
+</code></pre></div>
+<p>constructs a deployment using the java container. If you need more control, construct this deployment yourself.</p>
 <h2 id="obj-javalivenessprobe">obj java.livenessProbe</h2>
 <h3 id="fn-javalivenessprobenew">fn java.livenessProbe.new</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">port</span><span class="o">=</span><span class="mf">8080</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">port</span><span class="o">=</span><span class="mf">8080</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>new constructs a fresh liveness probe, checking if the tcp port 8080 is open</p>
 <h2 id="obj-javareadinessprobe">obj java.readinessProbe</h2>
 <h3 id="fn-javareadinessprobenew">fn java.readinessProbe.new</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">port</span><span class="o">=</span><span class="mf">18080</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="o">=</span><span class="s1">&#39;/actuator/health&#39;</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">port</span><span class="o">=</span><span class="mf">18080</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="o">=</span><span class="s1">&#39;/actuator/health&#39;</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>new constructs a fresh readiness probe, checking if the application
 is up. The port and path of the actuator endpoint can be changed
