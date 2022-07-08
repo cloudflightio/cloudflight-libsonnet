@@ -1,8 +1,11 @@
+local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
 {
   withK(k):: {
+    '#java': d.obj('java holds my functions related to java based applications'),
     java+: {
       livenessProbe+: {
         local lp = k.core.v1.container.livenessProbe,
+        '#new': d.fn('new constructs a fresh liveness probe, checking if the tcp port 8080 is open', [d.arg('port', d.T.number, 8080)]),
         new(port=8080): lp.withFailureThreshold(5)
                         + lp.withInitialDelaySeconds(30)
                         + lp.withPeriodSeconds(10)
@@ -12,9 +15,14 @@
       },
       readinessProbe+: {
         local rp = k.core.v1.container.readinessProbe,
+        '#new': d.fn(|||
+          new constructs a fresh readiness probe, checking if the application
+          is up. The port and path of the actuator endpoint can be changed
+          using the parameters.
+        |||, [d.arg('port', d.T.number, 18080), d.arg('path', d.T.string, '/actuator/health')]),
         new(
           port=18080,
-          path="/actuator/health"
+          path='/actuator/health'
         ): rp.withFailureThreshold(5)
            + rp.withInitialDelaySeconds(30)
            + rp.withPeriodSeconds(10)
@@ -26,39 +34,40 @@
       container+: {
         local container = k.core.v1.container,
         local port = k.core.v1.containerPort,
-        new(name,
-            image,
-            port=8080,
-            actuatorPort=port+1000,
-            env={}
-           ): container.new(name,image)
-              + container.withPorts([
-                port.new('http', port),
-                port.new('actuator', actuatorPort),
-              ])
-              + container.withEnvMapMixin({
-                'SPRING_PROFILES_ACTIVE': 'kubernetes',
-              })
-              + container.withEnvMapMixin(env)
-              + container.resources.withRequests({
-                cpu: '100m',
-                memory: '1Gi',
-              })
-              + container.resources.withLimits({
-                cpu: '500m',
-                memory: '1Gi',
-              })
-              + k.utils.java.livenessProbe.new()
-              + k.utils.java.readinessProbe.new(),
+        new(
+          name,
+          image,
+          port=8080,
+          actuatorPort=port + 1000,
+          env={}
+        ): container.new(name, image)
+           + container.withPorts([
+             port.new('http', port),
+             port.new('actuator', actuatorPort),
+           ])
+           + container.withEnvMapMixin({
+             SPRING_PROFILES_ACTIVE: 'kubernetes',
+           })
+           + container.withEnvMapMixin(env)
+           + container.resources.withRequests({
+             cpu: '100m',
+             memory: '1Gi',
+           })
+           + container.resources.withLimits({
+             cpu: '500m',
+             memory: '1Gi',
+           })
+           + k.utils.java.livenessProbe.new()
+           + k.utils.java.readinessProbe.new(),
 
       },
       deployment+: {
         local deployment = k.apps.v1.deployment,
-        new(name,image,replicas=1,env={}):
+        new(name, image, replicas=1, env={}):
           deployment.new(name, replicas, containers=[
-            k.utils.java.container.new(name,image,port=8080,env=env)
-          ])
-      }
-    }
-  }
+            k.utils.java.container.new(name, image, port=8080, env=env),
+          ]),
+      },
+    },
+  },
 }
