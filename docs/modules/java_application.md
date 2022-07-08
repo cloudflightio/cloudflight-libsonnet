@@ -1,6 +1,6 @@
 # Java Applications
 
-Even though not strictyl a module, this library contains a lot of utility
+Even though not strictly a module, this library contains a lot of utility
 functions to help you deploy Java applications. This page contains some ways
 these functions can be used.
 
