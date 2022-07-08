@@ -36,5 +36,8 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       For more information on customization options in `k.libsonnet`, take a
       look at the [labeling](labeling/) extension.
 
-    |||, ), util+:
-    (import 'util/main.libsonnet').withK(self), }
+    |||,
+  ),
+  util+:
+    (import 'util/main.libsonnet').withK(self),
+}

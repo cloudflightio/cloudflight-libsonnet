@@ -5,5 +5,5 @@
   _config+:: {
     project:: null,
   },
-  extensions:: null
+  extensions:: null,
 }

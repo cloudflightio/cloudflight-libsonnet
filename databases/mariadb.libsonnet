@@ -86,8 +86,8 @@ local k = import '../prelude.libsonnet';
                     + volumeMount.withSubPath('init.sql'),
                   ])
                   + container.withEnvMap({
-                    'MYSQL_DATABASE': $._config.mariadb.database,
-                    'MYSQL_LOWER_CASE_TABLE_NAMES': '1',
+                    MYSQL_DATABASE: $._config.mariadb.database,
+                    MYSQL_LOWER_CASE_TABLE_NAMES: '1',
                   })
                   + container.withEnvFrom([
                     {
