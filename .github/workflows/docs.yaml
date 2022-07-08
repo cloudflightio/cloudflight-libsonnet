@@ -1,0 +1,22 @@
+name: Publish docs via GitHub Pages
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Deploy docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: docker run -v $PWD:/src jsonnetlibs/docsonnet:0.0.3 /src/custom.libsonnet -o /src/docs/library --urlPrefix /library
+      - uses: actions/setup-python@v2
+      - run: pip install -r requirements.txt
+      - run: git config user.name 'github-actions[bot]' && git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Build docs
+        run: mike deploy main
+      - name: Deploy docs
+        run: git push -u origin gh-pages
