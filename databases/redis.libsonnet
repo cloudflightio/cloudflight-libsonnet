@@ -1,6 +1,7 @@
 local k = (import '../prelude.libsonnet');
 {
   _config+:: {
+    // begin_config
     redis: {
       name: 'redis',
       image: 'registry.redhat.io/rhel8/redis-6:1-62',
@@ -18,6 +19,7 @@ local k = (import '../prelude.libsonnet');
         },
       },
     },
+    // end_config
   },
   redis: {
     local deployment = k.apps.v1.deployment,

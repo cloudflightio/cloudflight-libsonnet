@@ -1,6 +1,7 @@
 local k = import '../prelude.libsonnet';
 {
   _config+:: {
+    // begin_config
     mariadb: {
       name: 'mariadb',
       storage: '5Gi',
@@ -21,6 +22,7 @@ local k = import '../prelude.libsonnet';
         },
       },
     },
+    // end_config
   },
   mariadb: {
     local deployment = k.apps.v1.deployment,

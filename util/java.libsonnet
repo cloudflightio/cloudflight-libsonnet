@@ -34,6 +34,17 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       container+: {
         local container = k.core.v1.container,
         local p = k.core.v1.containerPort,
+        '#new': d.fn(|||
+          constructs a container with reccomended settings for Java/Spring Boot applications.
+          Includes liveness- and readiness probes, activates the `kubernetes` spring profile
+          and sets sensible resource defaults.
+        |||, [
+          d.arg('name', d.T.string),
+          d.arg('image', d.T.string),
+          d.arg('port', d.T.number, 8080),
+          d.arg('actuatorPort', d.T.number, 'port+8080'),
+          d.arg('env', d.T.object, {}),
+        ]),
         new(
           name,
           image,
@@ -63,6 +74,9 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       },
       deployment+: {
         local deployment = k.apps.v1.deployment,
+        '#new': d.fn(|||
+          constructs a deployment using the java container. If you need more control, construct this deployment yourself.
+        |||, [d.arg('name', d.T.string), d.arg('image', d.T.string), d.arg('replicas', d.T.number, 1), d.arg('env', d.T.object, {})]),
         new(name, image, replicas=1, env={}):
           deployment.new(name, replicas, containers=[
             k.util.java.container.new(name, image, port=8080, env=env),

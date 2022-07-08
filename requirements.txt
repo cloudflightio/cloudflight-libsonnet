@@ -15,3 +15,6 @@ mkdocs-git-revision-date-plugin>=0.3.2
 
 # versioned documentation
 mike>=1.1.2
+
+# includable files
+mkdocs-include-markdown-plugin>=3.5.2
