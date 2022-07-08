@@ -33,7 +33,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       },
       container+: {
         local container = k.core.v1.container,
-        local port = k.core.v1.containerPort,
+        local p = k.core.v1.containerPort,
         new(
           name,
           image,
@@ -42,13 +42,13 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
           env={}
         ): container.new(name, image)
            + container.withPorts([
-             port.new('http', port),
-             port.new('actuator', actuatorPort),
+             p.new('http', 8080),
+             p.new('actuator', actuatorPort),
            ])
-           + container.withEnvMapMixin({
+           + container.withEnvMap({
              SPRING_PROFILES_ACTIVE: 'kubernetes',
            })
-           + container.withEnvMapMixin(env)
+           + container.withEnvMap(env)
            + container.resources.withRequests({
              cpu: '100m',
              memory: '1Gi',
@@ -57,15 +57,15 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
              cpu: '500m',
              memory: '1Gi',
            })
-           + k.utils.java.livenessProbe.new()
-           + k.utils.java.readinessProbe.new(),
+           + k.util.java.livenessProbe.new()
+           + k.util.java.readinessProbe.new(),
 
       },
       deployment+: {
         local deployment = k.apps.v1.deployment,
         new(name, image, replicas=1, env={}):
           deployment.new(name, replicas, containers=[
-            k.utils.java.container.new(name, image, port=8080, env=env),
+            k.util.java.container.new(name, image, port=8080, env=env),
           ]),
       },
     },
