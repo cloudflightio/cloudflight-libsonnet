@@ -147,5 +147,7 @@ local k = import '../prelude.libsonnet';
     serviceMonitor: k.monitoring.v1.serviceMonitor.new($._config.mariadb.name)
                     + k.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
                     + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ port: 'exporter-metrics' }]),
+
+    passwordSecretKeyRef:: { name: $._config.mariadb.name, key: 'MYSQL_PASSWORD' },
   },
 }

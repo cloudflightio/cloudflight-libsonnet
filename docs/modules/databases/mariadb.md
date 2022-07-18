@@ -17,3 +17,10 @@ The following snippets lists all available configuration options alongside their
 }
 ```
 
+## Exposed values
+
+The following values are exposed, but not exported:
+
+| Name                           | Contents                                                   |
+|--------------------------------|------------------------------------------------------------|
+| `mariadb.passwordSecretKeyRef` | A kubernetes `secretKeyRef`, referencing the user password |
