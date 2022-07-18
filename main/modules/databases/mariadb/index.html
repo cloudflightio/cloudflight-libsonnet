@@ -582,9 +582,40 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          MariaDB Database Module
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         MariaDB Database Module
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#exposed-values" class="md-nav__link">
+    Exposed values
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -638,6 +669,21 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#exposed-values" class="md-nav__link">
+    Exposed values
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -684,13 +730,29 @@
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
 <a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="p">}</span><span class="w"></span>
 </code></pre></div>
+<h2 id="exposed-values">Exposed values</h2>
+<p>The following values are exposed, but not exported:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mariadb.passwordSecretKeyRef</code></td>
+<td>A kubernetes <code>secretKeyRef</code>, referencing the user password</td>
+</tr>
+</tbody>
+</table>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      2022-07-08
+      2022-07-18
     
   </small>
 </div>
