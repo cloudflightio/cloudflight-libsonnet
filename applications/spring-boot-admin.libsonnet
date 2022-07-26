@@ -5,6 +5,7 @@ local k = import '../prelude.libsonnet';
     springBootAdmin: {
       name: 'spring-boot-admin',
       image: 'ghcr.io/cloudflightio/spring-boot-admin-docker:2.7.3',
+      host: error '$._config.springBootAdmin.host must be defined',
       serviceAccountName: 'default',
       config: {
         spring: {
@@ -63,5 +64,6 @@ local k = import '../prelude.libsonnet';
                   volume.fromConfigMap('config', self.config.metadata.name),
                 ]),
     service: k.util.serviceFor(self.deployment),
+    ingress: k.util.ingressFor(self.service, $._config.springBootAdmin.host),
   },
 }
