@@ -54,11 +54,11 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
           name,
           image,
           port=8080,
-          actuatorPort=port + 1000,
+          actuatorPort=port + 10000,
           env={}
         ): container.new(name, image)
            + container.withPorts([
-             p.new('http', 8080),
+             p.new('http', port),
              p.new('actuator', actuatorPort),
            ])
            + container.withEnvMap({
@@ -74,18 +74,32 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
              memory: '1Gi',
            })
            + k.util.java.livenessProbe.new()
-           + k.util.java.readinessProbe.new(),
+           + k.util.java.readinessProbe.new(actuatorPort),
 
       },
       deployment+: {
         local deployment = k.apps.v1.deployment,
         '#new': d.fn(|||
           constructs a deployment using the java container. If you need more control, construct this deployment yourself.
-        |||, [d.arg('name', d.T.string), d.arg('image', d.T.string), d.arg('replicas', d.T.number, 1), d.arg('env', d.T.object, {})]),
-        new(name, image, replicas=1, env={}):
+
+          The `runtime` and `component` parameters are used to prefill reccomended labels
+        |||, [
+          d.arg('name', d.T.string),
+          d.arg('image', d.T.string),
+          d.arg('replicas', d.T.number, 1),
+          d.arg('env', d.T.object, {}),
+          d.arg('runtime', d.T.string, 'spring-boot'),
+          d.arg('component', d.T.string, 'backend'),
+        ]),
+        new(name, image, replicas=1, env={}, runtime='spring-boot', component='backend'):
           deployment.new(name, replicas, containers=[
             k.util.java.container.new(name, image, port=8080, env=env),
-          ]),
+          ])
+          + deployment.metadata.withLabelsMixin({
+            'app.openshift.io/runtime': runtime,
+            'app.kubernetes.io/name': name,
+            'app.kubernetes.io/component': component,
+          }),
       },
     },
   },
