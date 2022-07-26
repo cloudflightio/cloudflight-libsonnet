@@ -21,7 +21,7 @@ The following snippets lists all available configuration options alongside their
 
 ## Integration and Service Discovery
 
-When using our [java helpers](../java_applications.md), spring-boot-admin will
+When using our [java helpers](../java_application.md), spring-boot-admin will
 automatically discover provided services and their respective actuator
 endpoints.
 
