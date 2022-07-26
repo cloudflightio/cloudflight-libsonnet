@@ -7,8 +7,8 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       a value for the hostname and defaults to '/' for the path.
     |||, [
       d.arg('service', d.T.object),
-      d.arg('port', d.T.number, 18080),
-      d.arg('path', d.T.string, '/actuator/health'),
+      d.arg('port', d.T.number, ''),
+      d.arg('path', d.T.string, '/'),
       d.arg('port', d.T.number, 'service.spec.ports[0].port'),
     ]),
     routeFor(service, host, path='/', port=service.spec.ports[0].port)::
