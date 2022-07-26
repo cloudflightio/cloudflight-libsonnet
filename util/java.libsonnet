@@ -53,7 +53,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
           env={}
         ): container.new(name, image)
            + container.withPorts([
-             p.new('http', 8080),
+             p.new('http', port),
              p.new('actuator', actuatorPort),
            ])
            + container.withEnvMap({
@@ -69,7 +69,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
              memory: '1Gi',
            })
            + k.util.java.livenessProbe.new()
-           + k.util.java.readinessProbe.new(),
+           + k.util.java.readinessProbe.new(actuatorPort),
 
       },
       deployment+: {
