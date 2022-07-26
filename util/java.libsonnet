@@ -5,13 +5,18 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
     java+: {
       livenessProbe+: {
         local lp = k.core.v1.container.livenessProbe,
-        '#new': d.fn('new constructs a fresh liveness probe, checking if the tcp port 8080 is open', [d.arg('port', d.T.number, 8080)]),
-        new(port=8080): lp.withFailureThreshold(5)
-                        + lp.withInitialDelaySeconds(30)
-                        + lp.withPeriodSeconds(10)
-                        + lp.withSuccessThreshold(1)
-                        + lp.withTimeoutSeconds(1)
-                        + lp.tcpSocket.withPort(port),
+        '#new': d.fn(|||
+          new constructs a fresh liveness probe, checking if the tcp port 8080 is open
+        |||, [d.arg('port', d.T.number, 8080), d.arg('initialDelaySeconds', d.T.number, 30)]),
+        new(
+          port=8080,
+          initialDelaySeconds=30
+        ): lp.withFailureThreshold(5)
+           + lp.withInitialDelaySeconds(initialDelaySeconds)
+           + lp.withPeriodSeconds(10)
+           + lp.withSuccessThreshold(1)
+           + lp.withTimeoutSeconds(1)
+           + lp.tcpSocket.withPort(port),
       },
       readinessProbe+: {
         local rp = k.core.v1.container.readinessProbe,
