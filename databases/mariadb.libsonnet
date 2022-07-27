@@ -124,6 +124,14 @@ local k = import '../prelude.libsonnet';
                   + container.withPorts([
                     port.new('metrics', 9104),
                   ])
+                  + container.resources.withRequests({
+                    cpu: '10m',
+                    memory: '32Mi',
+                  })
+                  + container.resources.withLimits({
+                    cpu: '100m',
+                    memory: '128Mi',
+                  })
                   + container.readinessProbe.withFailureThreshold(5)
                   + container.readinessProbe.withInitialDelaySeconds(30)
                   + container.readinessProbe.withPeriodSeconds(10)
