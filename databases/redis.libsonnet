@@ -102,6 +102,6 @@ local k = (import '../prelude.libsonnet');
     service: k.util.serviceFor(self.deployment),
     serviceMonitor: k.monitoring.v1.serviceMonitor.new($._config.redis.name)
                     + k.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
-                    + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ port: 'exporter-metrics' }]),
+                    + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ targetPort: 9121 }]),
   },
 }
