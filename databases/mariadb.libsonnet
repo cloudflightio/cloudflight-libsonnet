@@ -5,8 +5,8 @@ local k = import '../prelude.libsonnet';
     mariadb: {
       name: 'mariadb',
       storage: '5Gi',
-      user: error '$._config.mariadb.user must be defined',
-      password: error '$._config.mariadb.password must be defined',
+      user: error 'cfg.user must be defined',
+      password: error 'cfg.password must be defined',
       database: self.user,
       image: 'registry.redhat.io/rhel8/mariadb-103:1-181',
       exporterImage: 'docker.io/prom/mysqld-exporter:v0.14.0',
@@ -24,7 +24,10 @@ local k = import '../prelude.libsonnet';
     },
     // end_config
   },
-  mariadb: {
+  newMariaDB(config):: {
+    local this = self,
+
+    local cfg = $._config.mariadb + config,
     local deployment = k.apps.v1.deployment,
     local container = k.core.v1.container,
     local port = k.core.v1.containerPort,
@@ -34,20 +37,20 @@ local k = import '../prelude.libsonnet';
     local cm = k.core.v1.configMap,
     local pvc = k.core.v1.persistentVolumeClaim,
     local is = k.image.v1.imageStream,
-    volume: pvc.new($._config.mariadb.name)
+    volume: pvc.new(cfg.name)
             + pvc.spec.resources.withRequests({
-              storage: $._config.mariadb.storage,
+              storage: cfg.storage,
             })
             + pvc.spec.withAccessModes(['ReadWriteOnce']),
-    secret: secret.new(name=$._config.mariadb.name, data={})
+    secret: secret.new(name=cfg.name, data={})
             + secret.withStringData({
-              MYSQL_USER: $._config.mariadb.user,
-              MYSQL_PASSWORD: $._config.mariadb.password,
-              MYSQL_DATABASE: $._config.mariadb.database,
-              MYSQL_EXPORTER_PASSWORD: $._config.mariadb.exporter_password,
+              MYSQL_USER: cfg.user,
+              MYSQL_PASSWORD: cfg.password,
+              MYSQL_DATABASE: cfg.database,
+              MYSQL_EXPORTER_PASSWORD: cfg.exporter_password,
               DATA_SOURCE_NAME: self.MYSQL_USER + ':' + self.MYSQL_PASSWORD + '@(127.0.0.1:3306)/',
             }),
-    initScripts: cm.new($._config.mariadb.name + '-init', data={
+    initScripts: cm.new(cfg.name + '-init', data={
       'init.sql': |||
         CREATE USER IF NOT EXISTS 'exporter'@'127.0.0.1' IDENTIFIED BY '${MYSQL_EXPORTER_PASSWORD}';
         ALTER USER 'exporter'@'127.0.0.1' IDENTIFIED BY '${MYSQL_EXPORTER_PASSWORD}';
@@ -75,8 +78,8 @@ local k = import '../prelude.libsonnet';
                              '-c',
                              'mysqladmin ping',
                            ]),
-    deployment: deployment.new(name=$._config.mariadb.name, replicas=1, containers=[
-                  container.new(name='mariadb', image=$._config.mariadb.image)
+    deployment: deployment.new(name=cfg.name, replicas=1, containers=[
+                  container.new(name='mariadb', image=cfg.image)
                   + container.withPorts([
                     port.new('mariadb', 3306),
                   ])
@@ -88,19 +91,19 @@ local k = import '../prelude.libsonnet';
                     + volumeMount.withSubPath('init.sql'),
                   ])
                   + container.withEnvMap({
-                    MYSQL_DATABASE: $._config.mariadb.database,
+                    MYSQL_DATABASE: cfg.database,
                     MYSQL_LOWER_CASE_TABLE_NAMES: '1',
                   })
                   + container.withEnvFrom([
                     {
-                      secretRef: { name: $.mariadb.secret.metadata.name },
+                      secretRef: { name: this.secret.metadata.name },
                     },
                   ])
                   + livenessProbe
                   + readinessProbe
-                  + container.resources.withRequests($._config.mariadb.resources.requests)
-                  + container.resources.withLimits($._config.mariadb.resources.limits),
-                  container.new(name='exporter', image=$._config.mariadb.exporterImage)
+                  + container.resources.withRequests(cfg.resources.requests)
+                  + container.resources.withLimits(cfg.resources.limits),
+                  container.new(name='exporter', image=cfg.exporterImage)
                   + container.withArgs([
                     '--collect.info_schema.innodb_metrics',
                     '--collect.info_schema.innodb_tablespaces',
@@ -119,7 +122,7 @@ local k = import '../prelude.libsonnet';
                   ])
                   + container.withEnv([{
                     name: 'DATA_SOURCE_NAME',
-                    valueFrom: { secretKeyRef: { name: $.mariadb.secret.metadata.name, key: 'DATA_SOURCE_NAME' } },
+                    valueFrom: { secretKeyRef: { name: this.secret.metadata.name, key: 'DATA_SOURCE_NAME' } },
                   }])
                   + container.withPorts([
                     port.new('metrics', 9104),
@@ -152,10 +155,11 @@ local k = import '../prelude.libsonnet';
                   volume.fromConfigMap('init', self.initScripts.metadata.name),
                 ]),
     service: k.util.serviceFor(self.deployment),
-    serviceMonitor: k.monitoring.v1.serviceMonitor.new($._config.mariadb.name)
+    serviceMonitor: k.monitoring.v1.serviceMonitor.new(cfg.name)
                     + k.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
                     + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ targetPort: 9104 }]),
 
-    passwordSecretKeyRef:: { name: $._config.mariadb.name, key: 'MYSQL_PASSWORD' },
+    passwordSecretKeyRef:: { name: cfg.name, key: 'MYSQL_PASSWORD' },
   },
+  mariadb: self.newMariaDB({}),
 }
