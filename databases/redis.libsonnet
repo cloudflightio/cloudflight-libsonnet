@@ -6,7 +6,7 @@ local k = (import '../prelude.libsonnet');
       name: 'redis',
       image: 'registry.redhat.io/rhel8/redis-6:1-62',
       exporterImage: 'docker.io/oliver006/redis_exporter:v1.43.0',
-      password: error '$._config.redis.password must either be defined or set to null',
+      password: error 'cfg.password must either be defined or set to null',
       storage: null,
       resources:: {
         limits: {
@@ -21,7 +21,11 @@ local k = (import '../prelude.libsonnet');
     },
     // end_config
   },
-  redis: {
+  newRedis(config):: {
+    local this = self,
+
+
+    local cfg = $._config.redis + config,
     local deployment = k.apps.v1.deployment,
     local container = k.core.v1.container,
     local port = k.core.v1.containerPort,
@@ -46,33 +50,35 @@ local k = (import '../prelude.libsonnet');
                              'redis-cli',
                              'ping',
                            ]),
-    [if $._config.redis.password != null then 'secret' else null]: secret.new($._config.redis.name, {})
-                                                                   + secret.withStringData({
-                                                                     REDIS_PASSWORD: $._config.redis.password,
-                                                                   }),
-    [if $._config.redis.storage != null then 'volume' else null]: pvc.new($._config.redis.name)
-                                                                  + pvc.spec.resources.withRequests({
-                                                                    storage: $._config.redis.storage,
-                                                                  })
-                                                                  + pvc.spec.withAccessModes(['ReadWriteOnce']),
-    deployment: deployment.new(name=$._config.redis.name, replicas=1, containers=[
-                  container.new(name='redis', image=$._config.redis.image)
+    optionals: {
+      [if cfg.password != null then 'secret' else null]: secret.new(cfg.name, {})
+                                                         + secret.withStringData({
+                                                           REDIS_PASSWORD: cfg.password,
+                                                         }),
+      [if cfg.storage != null then 'volume' else null]: pvc.new(cfg.name)
+                                                        + pvc.spec.resources.withRequests({
+                                                          storage: cfg.storage,
+                                                        })
+                                                        + pvc.spec.withAccessModes(['ReadWriteOnce']),
+    },
+    deployment: deployment.new(name=cfg.name, replicas=1, containers=[
+                  container.new(name='redis', image=cfg.image)
                   + container.withPorts([
                     port.new('redis', 6379),
                   ])
                   + livenessProbe
                   + readinessProbe
-                  + container.resources.withRequests($._config.redis.resources.requests)
-                  + container.resources.withLimits($._config.redis.resources.limits)
-                  + (if $._config.redis.password != null then container.withEnvFrom([
+                  + container.resources.withRequests(cfg.resources.requests)
+                  + container.resources.withLimits(cfg.resources.limits)
+                  + (if cfg.password != null then container.withEnvFrom([
                        {
-                         secretRef: { name: $.redis.secret.metadata.name },
+                         secretRef: { name: this.optionals.secret.metadata.name },
                        },
                      ]) else {})
-                  + (if $._config.redis.storage != null then container.withVolumeMounts([
+                  + (if cfg.storage != null then container.withVolumeMounts([
                        volumeMount.new(name='data', mountPath='/var/lib/redis/data'),
                      ]) else {}),
-                  container.new(name='exporter', image=$._config.redis.exporterImage)
+                  container.new(name='exporter', image=cfg.exporterImage)
                   + container.withEnvMap({
                     REDIS_ADDR: 'redis://127.0.0.1:6379',
                   })
@@ -93,15 +99,16 @@ local k = (import '../prelude.libsonnet');
                   + container.livenessProbe.withTimeoutSeconds(1)
                   + container.livenessProbe.tcpSocket.withPort(9121),
                 ])
-                + (if $._config.redis.storage != null then (
+                + (if cfg.storage != null then (
                      deployment.spec.strategy.withType('Recreate')
                      + deployment.spec.template.spec.withVolumes([
-                       volume.fromPersistentVolumeClaim('data', self.volume.metadata.name),
+                       volume.fromPersistentVolumeClaim('data', self.optionals.volume.metadata.name),
                      ])
                    ) else {}),
     service: k.util.serviceFor(self.deployment),
-    serviceMonitor: k.monitoring.v1.serviceMonitor.new($._config.redis.name)
+    serviceMonitor: k.monitoring.v1.serviceMonitor.new(cfg.name)
                     + k.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
                     + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ targetPort: 9121 }]),
   },
+  redis: self.newRedis({}),
 }
