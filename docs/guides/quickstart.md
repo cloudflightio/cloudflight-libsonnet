@@ -52,7 +52,7 @@ MariaDB instance.
 ### Creating the application
 
 Applications should be defined in the `lib` folder. To configure a java
-application, we create a file called `lib/my-application.libsonnet` with the
+application, we create a file called `lib/test-java.libsonnet` with the
 contents below.
 
 ```.ts
