@@ -12,10 +12,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Setup Grafana Tanka
-      uses: unfunco/setup-tanka@1.0.0-alpha.1
-      with:
-        tanka-version: 0.20.0
-    - name: Apply the production configuration
+      run: |
+        sudo curl -Lo /usr/local/bin/tk https://github.com/grafana/tanka/releases/latest/download/tk-linux-amd64
+        sudo chmod a+x /usr/local/bin/tk
+    - name: Run tests
       run: |
         export FAILED=0
         cd tests
