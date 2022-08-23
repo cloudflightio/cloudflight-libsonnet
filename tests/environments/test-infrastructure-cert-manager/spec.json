@@ -1,0 +1,13 @@
+{
+  "apiVersion": "tanka.dev/v1alpha1",
+  "kind": "Environment",
+  "metadata": {
+    "name": "environments/test-infrastructure-cert-manager"
+  },
+  "spec": {
+    "apiServer": "",
+    "namespace": "test-infrastructure-cert-manager",
+    "resourceDefaults": {},
+    "expectVersions": {}
+  }
+}
