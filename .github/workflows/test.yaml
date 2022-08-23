@@ -1,0 +1,37 @@
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup Grafana Tanka
+      uses: unfunco/setup-tanka@v1
+      with:
+        tanka-version: 0.20.0
+    - name: Apply the production configuration
+      run: |
+        export FAILED=0
+        cd tests
+        for f in environments/*/main.jsonnet; do 
+          echo "$f"
+          if tk show "$f" --dangerous-allow-redirect > /dev/null; then 
+            echo "OK" 
+          else 
+            echo "ERR"
+            export FAILED=1
+          fi 
+        done 
+        if [ "$FAILED" != "0" ]; then 
+          echo "FAIL"
+          exit 1
+        else 
+          echo "SUCCESS"
+          exit 0
+        fi 
