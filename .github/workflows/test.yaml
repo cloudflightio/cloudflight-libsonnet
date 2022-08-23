@@ -11,10 +11,15 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Setup Grafana Tanka
+    - name: Setup Grafana Tanka and Jsonnet-Bundler
       run: |
         sudo curl -Lo /usr/local/bin/tk https://github.com/grafana/tanka/releases/latest/download/tk-linux-amd64
         sudo chmod a+x /usr/local/bin/tk
+        sudo curl -Lo /usr/local/bin/jb https://github.com/jsonnet-bundler/jsonnet-bundler/releases/latest/download/jb-linux-amd64
+        sudo chmod a+x /usr/local/bin/jb
+    - name: Install dependencies
+      run: |
+        jb install
     - name: Run tests
       run: |
         export FAILED=0
