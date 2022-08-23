@@ -14,7 +14,7 @@ local k = (import '../../prelude.libsonnet');
   newNginxIngress(config={}):: manifest + {
 
     local this = self,
-    local cfg = $._config.ingress + config,
+    local cfg = $._config.nginxingress + config,
 
     "service-ingress-nginx-controller"+: {
       "spec"+: {
