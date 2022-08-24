@@ -40,4 +40,24 @@ jobs:
         else 
           echo "SUCCESS"
           exit 0
-        fi 
+        fi
+  fmt:
+    name: fmt
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup Grafana Tanka
+      run: |
+        sudo curl -Lo /usr/local/bin/tk https://github.com/grafana/tanka/releases/latest/download/tk-linux-amd64
+        sudo chmod a+x /usr/local/bin/tk
+    - name: Test fmt
+      run: |
+        if $(tk fmt . 2>&1 | grep -q 'No changes'); then
+          echo "SUCCESS"
+          exit 0
+        else
+          echo "Formating needed. Please run 'tk fmt .'"
+          git diff
+          exit 1
+        fi
