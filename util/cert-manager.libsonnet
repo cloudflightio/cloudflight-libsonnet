@@ -29,7 +29,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
           + cm.nogroup.v1.issuer.spec.acme.privateKeySecretRef.withName(name)
           + cm.nogroup.v1.issuer.spec.acme.withSolvers([
             cm.nogroup.v1.issuer.spec.acme.solvers.http01.ingress.withClass(ingressClassName),
-          ])
+          ]),
       },
     },
   },
