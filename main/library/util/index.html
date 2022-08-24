@@ -1137,7 +1137,7 @@
 <li><a href="#fn-servicefor"><code>fn serviceFor(deployment, ignored_labels, nameFormat='%(port)s')</code></a></li>
 <li><a href="#obj-certmanager"><code>obj certmanager</code></a></li>
 <li><a href="#obj-certmanagerissuer"><code>obj certmanager.issuer</code></a><ul>
-<li><a href="#fn-certmanagerissuernew"><code>fn new(emain, ingressClassName='nginx', production=true, clusterwide=true)</code></a></li>
+<li><a href="#fn-certmanagerissuernew"><code>fn new(emain, ingressClassName='nginx', production=true, clusterwide=true, name='letsencrypt-production || letsencrypt-staging')</code></a></li>
 </ul>
 </li>
 <li><a href="#obj-java"><code>obj java</code></a></li>
@@ -1182,7 +1182,7 @@ to avoid confusion. This can be changed with the <code>nameFormat</code> paramet
 <p>certman holds functions related to cert-manager (cert-manager.io)</p>
 <h2 id="obj-certmanagerissuer">obj certmanager.issuer</h2>
 <h3 id="fn-certmanagerissuernew">fn certmanager.issuer.new</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">emain</span><span class="p">,</span><span class="w"> </span><span class="nx">ingressClassName</span><span class="o">=</span><span class="s1">&#39;nginx&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">production</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">clusterwide</span><span class="o">=</span><span class="kc">true</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">emain</span><span class="p">,</span><span class="w"> </span><span class="nx">ingressClassName</span><span class="o">=</span><span class="s1">&#39;nginx&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">production</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">clusterwide</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">=</span><span class="s1">&#39;letsencrypt-production || letsencrypt-staging&#39;</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>constructs a cert-manager issuer resource for letsencrypt with sensible default.</p>
 <h2 id="obj-java">obj java</h2>
@@ -1218,7 +1218,7 @@ using the parameters.</p>
   <small>
     
       Last update:
-      2022-08-23
+      2022-08-24
     
   </small>
 </div>
