@@ -14,6 +14,16 @@
     {
       "source": {
         "git": {
+          "remote": "https://github.com/jsonnet-libs/cert-manager-libsonnet.git",
+          "subdir": "1.8"
+        }
+      },
+      "version": "d4270a3802a54431a17f30ec0625ec3349f0de83",
+      "sum": "SQts4eGBBPyxMYF5z3QaqX7gD0jyB4NBELgO/zCWfO8="
+    },
+    {
+      "source": {
+        "git": {
           "remote": "https://github.com/jsonnet-libs/docsonnet.git",
           "subdir": "doc-util"
         }

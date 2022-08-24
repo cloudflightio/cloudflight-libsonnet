@@ -1,3 +1,4 @@
+local cm = import 'github.com/jsonnet-libs/cert-manager-libsonnet/1.8/main.libsonnet';
 local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
 {
   withK(k):: {
@@ -11,37 +12,24 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
           d.arg('ingressClassName', d.T.string, 'nginx'),
           d.arg('production', d.T.bool, true),
           d.arg('clusterwide', d.T.bool, true),
+          d.arg('name', d.T.string, 'letsencrypt-production || letsencrypt-staging'),
         ]),
-        new(email, ingressClassName='nginx', production=true, clusterwide=true):: {
-          local ci = self,
-
-          local server = if production then 'https://acme-v02.api.letsencrypt.org/' else 'https://acme-staging-v02.api.letsencrypt.org/directory',
-          local name = if production then 'letsencrypt-production' else 'letsencrypt-staging',
-
-          apiVersion: 'cert-manager.io/v1',
-          kind: if clusterwide then 'ClusterIssuer' else 'Issuer',
-          metadata: {
-            name: name,
-          },
-          spec+: {
-            acme: {
-              email: email,
-              privateKeySecretRef: {
-                name: name,
-              },
-              server: server,
-              solvers: [
-                {
-                  http01: {
-                    ingress: {
-                      class: ingressClassName,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
+        new(
+          email,
+          ingressClassName='nginx',
+          production=true,
+          clusterwide=true,
+          name=(if production then 'letsencrypt-production' else 'letsencrypt-staging')
+        )::
+          (if clusterwide then cm.nogroup.v1.clusterIssuer.new(name) else cm.nogroup.v1.issuer.new(name))
+          + cm.nogroup.v1.issuer.spec.acme.withEmail(email)
+          + cm.nogroup.v1.issuer.spec.acme.withServer(
+            if production then 'https://acme-v02.api.letsencrypt.org/' else 'https://acme-staging-v02.api.letsencrypt.org/directory'
+          )
+          + cm.nogroup.v1.issuer.spec.acme.privateKeySecretRef.withName(name)
+          + cm.nogroup.v1.issuer.spec.acme.withSolvers([
+            cm.nogroup.v1.issuer.spec.acme.solvers.http01.ingress.withClass(ingressClassName),
+          ])
       },
     },
   },

@@ -1,4 +1,5 @@
 local k = import '../prelude.libsonnet';
+local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.libsonnet';
 {
   _config+:: {
     // begin_config
@@ -155,9 +156,9 @@ local k = import '../prelude.libsonnet';
                   volume.fromConfigMap('init', self.initScripts.metadata.name),
                 ]),
     service: k.util.serviceFor(self.deployment),
-    serviceMonitor: k.monitoring.v1.serviceMonitor.new(cfg.name)
-                    + k.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
-                    + k.monitoring.v1.serviceMonitor.spec.withEndpoints([{ targetPort: 9104 }]),
+    serviceMonitor: p.monitoring.v1.serviceMonitor.new(cfg.name)
+                    + p.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
+                    + p.monitoring.v1.serviceMonitor.spec.withEndpoints([{ targetPort: 9104 }]),
 
     passwordSecretKeyRef:: { name: cfg.name, key: 'MYSQL_PASSWORD' },
   },
