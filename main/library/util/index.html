@@ -683,6 +683,73 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauth" class="md-nav__link">
+    obj openshiftOAuth
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauthcontainer" class="md-nav__link">
+    obj openshiftOAuth.container
+  </a>
+  
+    <nav class="md-nav" aria-label="obj openshiftOAuth.container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-openshiftoauthcontainernew" class="md-nav__link">
+    fn openshiftOAuth.container.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauthdeployment" class="md-nav__link">
+    obj openshiftOAuth.deployment
+  </a>
+  
+    <nav class="md-nav" aria-label="obj openshiftOAuth.deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-openshiftoauthdeploymentwithproxy" class="md-nav__link">
+    fn openshiftOAuth.deployment.withProxy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauthserviceaccount" class="md-nav__link">
+    obj openshiftOAuth.serviceAccount
+  </a>
+  
+    <nav class="md-nav" aria-label="obj openshiftOAuth.serviceAccount">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-openshiftoauthserviceaccountnew" class="md-nav__link">
+    fn openshiftOAuth.serviceAccount.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1110,6 +1177,73 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauth" class="md-nav__link">
+    obj openshiftOAuth
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauthcontainer" class="md-nav__link">
+    obj openshiftOAuth.container
+  </a>
+  
+    <nav class="md-nav" aria-label="obj openshiftOAuth.container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-openshiftoauthcontainernew" class="md-nav__link">
+    fn openshiftOAuth.container.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauthdeployment" class="md-nav__link">
+    obj openshiftOAuth.deployment
+  </a>
+  
+    <nav class="md-nav" aria-label="obj openshiftOAuth.deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-openshiftoauthdeploymentwithproxy" class="md-nav__link">
+    fn openshiftOAuth.deployment.withProxy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obj-openshiftoauthserviceaccount" class="md-nav__link">
+    obj openshiftOAuth.serviceAccount
+  </a>
+  
+    <nav class="md-nav" aria-label="obj openshiftOAuth.serviceAccount">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fn-openshiftoauthserviceaccountnew" class="md-nav__link">
+    fn openshiftOAuth.serviceAccount.new
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1155,6 +1289,19 @@
 </li>
 <li><a href="#obj-javareadinessprobe"><code>obj java.readinessProbe</code></a><ul>
 <li><a href="#fn-javareadinessprobenew"><code>fn new(port=18080, path='/actuator/health')</code></a></li>
+</ul>
+</li>
+<li><a href="#obj-openshiftoauth"><code>obj openshiftOAuth</code></a></li>
+<li><a href="#obj-openshiftoauthcontainer"><code>obj openshiftOAuth.container</code></a><ul>
+<li><a href="#fn-openshiftoauthcontainernew"><code>fn new(upstream, serviceAccount)</code></a></li>
+</ul>
+</li>
+<li><a href="#obj-openshiftoauthdeployment"><code>obj openshiftOAuth.deployment</code></a><ul>
+<li><a href="#fn-openshiftoauthdeploymentwithproxy"><code>fn withProxy(upstream, serviceAccount)</code></a></li>
+</ul>
+</li>
+<li><a href="#obj-openshiftoauthserviceaccount"><code>obj openshiftOAuth.serviceAccount</code></a><ul>
+<li><a href="#fn-openshiftoauthserviceaccountnew"><code>fn new(name, route)</code></a></li>
 </ul>
 </li>
 </ul>
@@ -1212,6 +1359,28 @@ and sets sensible resource defaults.</p>
 <p>new constructs a fresh readiness probe, checking if the application
 is up. The port and path of the actuator endpoint can be changed
 using the parameters.</p>
+<h2 id="obj-openshiftoauth">obj openshiftOAuth</h2>
+<p>openshiftOAuth contains utilities to proxy an application using the <a href="https://github.com/openshift/oauth-proxy">OpenShift OAuth Proxy</a></p>
+<h2 id="obj-openshiftoauthcontainer">obj openshiftOAuth.container</h2>
+<h3 id="fn-openshiftoauthcontainernew">fn openshiftOAuth.container.new</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">upstream</span><span class="p">,</span><span class="w"> </span><span class="nx">serviceAccount</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>constructs a container proxying connections to the <code>upstream</code> parameter.</p>
+<h2 id="obj-openshiftoauthdeployment">obj openshiftOAuth.deployment</h2>
+<h3 id="fn-openshiftoauthdeploymentwithproxy">fn openshiftOAuth.deployment.withProxy</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nx">withProxy</span><span class="p">(</span><span class="nx">upstream</span><span class="p">,</span><span class="w"> </span><span class="nx">serviceAccount</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>add a proxy sidecar to the container. This also sets the service
+account used by the pod. The ServiceAccount needs to have the correct
+redirect reference for the route. See
+<code>openshiftOAuth.serviceAccount.new</code> for an easy way to create a
+compliant service account</p>
+<h2 id="obj-openshiftoauthserviceaccount">obj openshiftOAuth.serviceAccount</h2>
+<h3 id="fn-openshiftoauthserviceaccountnew">fn openshiftOAuth.serviceAccount.new</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="ow">new</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="nx">route</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>constructs a serviceaccount annotated with a oauth-redirectreference
+pointing to the route parameter</p>
 
   <hr>
 <div class="md-source-file">
