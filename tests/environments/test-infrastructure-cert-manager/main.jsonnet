@@ -4,8 +4,8 @@
     certmanager: {
       name: 'cert-manager',
       namespace: 'cert-manager',
-      aks: true
-    }
+      aks: true,
+    },
   },
 } + {
   assert std.isObject($.certmanager),

@@ -6,25 +6,25 @@ local k = (import '../../prelude.libsonnet');
     // begin_config
     certmanager: {
       name: 'cert-manager',
-      aks: false
-    }
+      aks: false,
+    },
     // end_config
   },
 
-  newCertManager(config={}):: manifest + {
+  newCertManager(config={}):: manifest {
     local this = self,
     local cfg = $._config.certmanager + config,
 
-    "validatingwebhookconfiguration-cert-manager-webhook"+: if cfg.aks then {
-      "webhooks": [ super.webhooks[0] + {
-          "namespaceSelector"+: {
-              "matchExpressions": super.matchExpressions + [
-                  { key: "control-plane", operator: "DoesNotExist" }
-              ]
-          }
+    'validatingwebhookconfiguration-cert-manager-webhook'+: if cfg.aks then {
+      webhooks: [super.webhooks[0] {
+        namespaceSelector+: {
+          matchExpressions: super.matchExpressions + [
+            { key: 'control-plane', operator: 'DoesNotExist' },
+          ],
+        },
       }] + super.webhooks[1:],
     } else {},
   },
 
-  certmanager: self.newCertManager()
+  certmanager: self.newCertManager(),
 }
