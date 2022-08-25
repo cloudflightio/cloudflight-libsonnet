@@ -24,7 +24,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
           (if clusterwide then cm.nogroup.v1.clusterIssuer.new(name) else cm.nogroup.v1.issuer.new(name))
           + cm.nogroup.v1.issuer.spec.acme.withEmail(email)
           + cm.nogroup.v1.issuer.spec.acme.withServer(
-            if production then 'https://acme-v02.api.letsencrypt.org/' else 'https://acme-staging-v02.api.letsencrypt.org/directory'
+            if production then 'https://acme-v02.api.letsencrypt.org/directory' else 'https://acme-staging-v02.api.letsencrypt.org/directory'
           )
           + cm.nogroup.v1.issuer.spec.acme.privateKeySecretRef.withName(name)
           + cm.nogroup.v1.issuer.spec.acme.withSolvers([
