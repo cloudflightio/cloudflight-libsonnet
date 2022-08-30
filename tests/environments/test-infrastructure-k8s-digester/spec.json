@@ -1,0 +1,13 @@
+{
+  "apiVersion": "tanka.dev/v1alpha1",
+  "kind": "Environment",
+  "metadata": {
+    "name": "environments/test-infrastructure-k8s-digester"
+  },
+  "spec": {
+    "apiServer": "",
+    "namespace": "test-infrastructure-nginx-ingress",
+    "resourceDefaults": {},
+    "expectVersions": {}
+  }
+}
