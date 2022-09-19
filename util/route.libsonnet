@@ -7,7 +7,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       a value for the hostname and defaults to '/' for the path.
     |||, [
       d.arg('service', d.T.object),
-      d.arg('port', d.T.number, ''),
+      d.arg('host', d.T.string, ''),
       d.arg('path', d.T.string, '/'),
       d.arg('port', d.T.number, 'service.spec.ports[0].port'),
     ]),
@@ -16,6 +16,27 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       + route.spec.to.withKind('Service')
       + route.spec.to.withName(service.metadata.name)
       + route.spec.port.withTargetPort(port),
+
+    '#weightedRouteFor': d.fn(|||
+      weightedRouteFor constructs a openshift route to the specified services. It expects
+      a value for the name, hostname, port, services and defaults to '/' for the path.
+      services expects an array consisting of objects with the keys name (name of the service) and weight.
+    |||, [
+      d.arg('name', d.T.string),
+      d.arg('host', d.T.string, ''),
+      d.arg('port', d.T.number, ''),
+      d.arg('services', d.T.object),
+      d.arg('path', d.T.string, '/'),
+    ]),
+    weightedRouteFor(name, host, port, services, path='/')::
+      route.new(name, host, path)
+      + route.spec.to.withKind('Service')
+      + route.spec.to.withName(services[0].name)
+      + route.spec.to.withWeight(services[0].weight)
+      + route.spec.port.withTargetPort(port)
+      + route.spec.withAlternateBackends(
+        std.map(function(v) v { kind: 'Service' }, services)[1:std.length(services):1]
+      ),
 
     local ingress = k.networking.v1.ingress,
     local rule = k.networking.v1.ingressRule,
@@ -26,7 +47,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
       defaults to '/' for the path.
     |||, [
       d.arg('service', d.T.object),
-      d.arg('port', d.T.number, ''),
+      d.arg('host', d.T.string, ''),
       d.arg('path', d.T.string, '/'),
       d.arg('port', d.T.number, 'service.spec.ports[0].port'),
     ]),
