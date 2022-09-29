@@ -73,7 +73,9 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
           echo "sentinel announce-ip $POD_IP" >> $REDIS_CONF
           echo "sentinel announce-port 6379" >> $REDIS_CONF
           echo "sentinel monitor main ${HOSTNAME%-*}-0.$SERVICE_NAME 6379 $QUORUM" >> $REDIS_CONF
-          echo "sentinel auth-pass main ${REDIS_PASSWORD}" >> $REDIS_CONF
+          if [[ -n "$REDIS_PASSWORD" ]]; then
+            echo "sentinel auth-pass main ${REDIS_PASSWORD}" >> $REDIS_CONF
+          fi
         else
           if [[ $HOSTNAME == *-0 ]]; then
             echo "running on the intended primary"
