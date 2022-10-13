@@ -6,7 +6,8 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
     redis: {
       name: 'redis',
       replicas: 3,
-      image: 'registry.redhat.io/rhel8/redis-6:1-72',
+      sentinels: 3,
+      image: 'quay.io/fedora/redis-6:20221012',
       exporterImage: 'docker.io/oliver006/redis_exporter:v1.43.0',
       password: error 'cfg.password must either be defined or set to null',
       topologyKey: 'kubernetes.io/hostname',
@@ -61,30 +62,48 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                                                          }),
     },
     config: cm.new(cfg.name, {
-      'post-init.sh': |||
-        if [[ -n "$REDIS_PASSWORD" ]]; then
-          echo "enabling masterauth"
-          echo "masterauth ${REDIS_PASSWORD}" >> $REDIS_CONF
-        fi
-
-        if [[ "${SENTINEL-false}" == "true" ]]; then
-          echo "configuring sentinel"
-          echo "bind 0.0.0.0" >> $REDIS_CONF
-          echo "sentinel announce-ip $POD_IP" >> $REDIS_CONF
-          echo "sentinel announce-port 6379" >> $REDIS_CONF
-          echo "sentinel monitor main ${HOSTNAME%-*}-0.$SERVICE_NAME 6379 $QUORUM" >> $REDIS_CONF
-          if [[ -n "$REDIS_PASSWORD" ]]; then
-            echo "sentinel auth-pass main ${REDIS_PASSWORD}" >> $REDIS_CONF
-          fi
-        else
-          if [[ $HOSTNAME == *-0 ]]; then
-            echo "running on the intended primary"
-          else
-            echo "running on a replica"
-            echo "replicaof ${HOSTNAME%-*}-0.$SERVICE_NAME 6379" >> $REDIS_CONF
-          fi
-        fi
-      |||,
+      'post-init.sh': (|||
+                         if [[ -n "$REDIS_PASSWORD" ]]; then
+                           echo "enabling masterauth"
+                           echo "masterauth ${REDIS_PASSWORD}" >> $REDIS_CONF
+                           export REDISCLI_AUTH="${REDIS_PASSWORD}"
+                         fi
+                         echo "replica-announce-ip $HOSTNAME.$SERVICE_NAME" >> $REDIS_CONF
+                         if [[ "${SENTINEL-false}" == "true" ]]; then
+                           echo "configuring sentinel"
+                           echo "bind 0.0.0.0" >> $REDIS_CONF
+                           echo "sentinel myid $(echo $HOSTNAME | sha256sum | cut -c1-40)" >> $REDIS_CONF
+                           echo "sentinel resolve-hostnames yes" >> $REDIS_CONF
+                           echo "sentinel announce-hostnames yes" >> $REDIS_CONF
+                           echo "sentinel monitor main %(name)s-0.$SERVICE_NAME 6379 $QUORUM" >> $REDIS_CONF
+                           echo "sentinel down-after-milliseconds main 5000" >> $REDIS_CONF
+                           echo "sentinel failover-timeout main 60000" >> $REDIS_CONF
+                           echo "sentinel parallel-syncs main 1" >> $REDIS_CONF
+                           if [[ -n "$REDIS_PASSWORD" ]]; then
+                             echo "sentinel auth-pass main ${REDIS_PASSWORD}" >> $REDIS_CONF
+                             echo "sentinel sentinel-pass ${REDIS_PASSWORD}" >> $REDIS_CONF
+                           fi
+                         else
+                           if [ "$(redis-cli -h %(sentinelService)s -p 26379 ping)" != "PONG" ]; then
+                             echo "Sentinel unavailable"
+                             if [[ $HOSTNAME == *-0 ]]; then
+                               echo "running on the intended primary"
+                             else
+                               echo "running replica"
+                               echo "replicaof %(name)s-0.$SERVICE_NAME 6379" >> $REDIS_CONF
+                             fi
+                           else
+                             echo "Sentinel found, finding master"
+                             MASTER="$(redis-cli -h %(sentinelService)s -p 26379 --raw sentinel get-master-addr-by-name main | head -n 1)"
+                             if [[ ${MASTER} == "$HOSTNAME.$SERVICE_NAME" ]]; then
+                               echo "running on the intended primary"
+                             else
+                               echo "Master got: $MASTER, updating this in redis.conf"
+                               echo "replicaof $MASTER 6379" >> $REDIS_CONF
+                             fi
+                           fi
+                         fi
+                       ||| % { name: this.redisCluster.metadata.name, sentinelService: this.sentinelService.metadata.name }),
     }),
     redisCluster: statefulset.new(name=cfg.name, replicas=cfg.replicas, containers=[
                     container.new(name='redis', image=cfg.image)
@@ -106,61 +125,16 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                     + (if cfg.storage != null then container.withVolumeMounts([
                          volumeMount.new(name='data', mountPath='/var/lib/redis/data'),
                        ]) else {}),
-                    container.new(name='sentinel', image=cfg.image)
-                    + container.withPorts([
-                      port.new('sentinel', 26379),
-                    ])
-                    + container.withEnvMap({
-                      SERVICE_NAME: this.hlService.metadata.name,
-                      REDIS_CONF: '/tmp/redis-sentinel.conf',
-                      SENTINEL: 'true',
-                      QUORUM: '' + (std.floor(cfg.replicas / 2) + 1),
-                    })
-                    + container.withEnvMixin([{
-                      name: 'POD_IP',
-                      valueFrom: {
-                        fieldRef: {
-                          fieldPath: 'status.podIP',
-                        },
+                  ])
+                  + statefulset.spec.template.spec.affinity.podAntiAffinity.withRequiredDuringSchedulingIgnoredDuringExecution([
+                    {
+                      labelSelector: {
+                        matchExpressions: [
+                          { key: 'name', operator: 'In', values: [this.redisCluster.spec.template.metadata.labels.name] },
+                        ],
                       },
-                    }])
-                    + container.withArgs(['run-redis', '--sentinel'])
-                    + container.resources.withRequests({
-                      cpu: '10m',
-                      memory: '64Mi',
-                    })
-                    + container.resources.withLimits({
-                      cpu: '50m',
-                      memory: '128Mi',
-                    })
-                    + (if cfg.password != null then container.withEnvFrom([
-                         {
-                           secretRef: { name: this.optionals.secret.metadata.name },
-                         },
-                       ]) else {})
-                    + (if cfg.storage != null then container.withVolumeMounts([
-                         volumeMount.new(name='data', mountPath='/var/lib/redis/data'),
-                       ]) else {}),
-                    container.new(name='exporter', image=cfg.exporterImage)
-                    + container.withEnvMap({
-                      REDIS_ADDR: 'redis://127.0.0.1:6379',
-                    })
-                    + container.withPorts([
-                      port.new('metrics', 9121),
-                    ])
-                    + container.readinessProbe.withFailureThreshold(5)
-                    + container.readinessProbe.withInitialDelaySeconds(30)
-                    + container.readinessProbe.withPeriodSeconds(10)
-                    + container.readinessProbe.withSuccessThreshold(1)
-                    + container.readinessProbe.withTimeoutSeconds(1)
-                    + container.readinessProbe.httpGet.withPath('/')
-                    + container.readinessProbe.httpGet.withPort(9121)
-                    + container.livenessProbe.withFailureThreshold(5)
-                    + container.livenessProbe.withInitialDelaySeconds(30)
-                    + container.livenessProbe.withPeriodSeconds(10)
-                    + container.livenessProbe.withSuccessThreshold(1)
-                    + container.livenessProbe.withTimeoutSeconds(1)
-                    + container.livenessProbe.tcpSocket.withPort(9121),
+                      topologyKey: cfg.topologyKey,
+                    },
                   ])
                   + statefulset.spec.withServiceName(self.hlService.metadata.name)
                   + statefulset.configMapVolumeMount(self.config, '/usr/share/container-scripts/redis/post-init.sh', volumeMountMixin={ subPath: 'post-init.sh' })
@@ -171,10 +145,50 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                       + pvc.spec.resources.withRequests({ storage: cfg.storage }),
                     ]
                   else []),
+    sentinels: statefulset.new(name=cfg.name + '-sentinel', replicas=cfg.sentinels, containers=[
+                 container.new(name='sentinel', image=cfg.image)
+                 + container.withPorts([
+                   port.new('sentinel', 26379),
+                 ])
+                 + container.withEnvMap({
+                   SERVICE_NAME: this.hlService.metadata.name,
+                   REDIS_CONF: '/tmp/redis-sentinel.conf',
+                   SENTINEL: 'true',
+                   QUORUM: '' + (std.floor(cfg.sentinels / 2) + 1),
+                 })
+                 + container.withEnvMixin([{
+                   name: 'POD_IP',
+                   valueFrom: {
+                     fieldRef: {
+                       fieldPath: 'status.podIP',
+                     },
+                   },
+                 }])
+                 + container.withArgs(['run-redis', '--sentinel'])
+                 + container.resources.withRequests({
+                   cpu: '10m',
+                   memory: '64Mi',
+                 })
+                 + container.resources.withLimits({
+                   cpu: '50m',
+                   memory: '128Mi',
+                 })
+                 + (if cfg.password != null then container.withEnvFrom([
+                      {
+                        secretRef: { name: this.optionals.secret.metadata.name },
+                      },
+                    ]) else {}),
+               ])
+               + statefulset.spec.withServiceName(self.sentinelService.metadata.name)
+               + deployment.configMapVolumeMount(self.config, '/usr/share/container-scripts/redis/post-init.sh', volumeMountMixin={ subPath: 'post-init.sh' }),
     hlService: k.util.serviceFor(self.redisCluster)
                + k.core.v1.service.metadata.withName(cfg.name + '-hl')
                + k.core.v1.service.spec.withPublishNotReadyAddresses(true)
                + k.core.v1.service.spec.withClusterIp('None'),
+    sentinelService: k.util.serviceFor(self.sentinels)
+                     + k.core.v1.service.metadata.withName(cfg.name + '-sentinel')
+                     + k.core.v1.service.spec.withPublishNotReadyAddresses(true)
+                     + k.core.v1.service.spec.withClusterIp('None'),
     serviceMonitor: p.monitoring.v1.serviceMonitor.new(cfg.name)
                     + p.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.hlService.metadata.labels)
                     + p.monitoring.v1.serviceMonitor.spec.withEndpoints([{ targetPort: 9121 }]),

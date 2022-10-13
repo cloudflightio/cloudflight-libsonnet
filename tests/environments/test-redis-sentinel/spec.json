@@ -5,8 +5,8 @@
     "name": "environments/test-redis-cluster"
   },
   "spec": {
-    "apiServer": "",
-    "namespace": "default",
+    "apiServer": "https://openshift-dev.internal.cloudflight.io:6443",
+    "namespace": "webner",
     "resourceDefaults": {},
     "expectVersions": {}
   }

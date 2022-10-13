@@ -1,7 +1,7 @@
 {
   _config+:: {
     cacheOne: {
-      name: 'cacheOne',
+      name: 'redis',
       password: 'foo',
     },
     cacheTwo: {
@@ -10,5 +10,5 @@
     },
   },
   cacheOne: (import 'cloudflight-libsonnet/databases/redis.libsonnet').newRedis($._config.cacheOne),
-  cacheTwo: (import 'cloudflight-libsonnet/databases/redis.libsonnet').newRedis($._config.cacheTwo),
+  //cacheTwo: (import 'cloudflight-libsonnet/databases/redis.libsonnet').newRedis($._config.cacheTwo),
 }
