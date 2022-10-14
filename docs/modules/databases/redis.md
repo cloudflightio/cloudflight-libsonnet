@@ -41,9 +41,8 @@ allows you to create multiple instances without polluting the global scope.
 
 ## High Availability
 
-If required, you can instead import the `redis-sentinel` module. This behaves
-exactly like the redis module but will inject each container with a sentinel
-node. This results in a highly available redis setup. The options available are:
+If required, you can instead import the `redis-sentinel` module. This creates an
+additional sentinel deployment which fails over the master and replicas:
 
 ```.ts
 (import 'cloudflight-libsonnet/databases/redis-sentinel.libsonnet')
