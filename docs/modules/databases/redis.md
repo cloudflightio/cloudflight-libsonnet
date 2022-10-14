@@ -55,3 +55,13 @@ additional sentinel deployment which fails over the master and replicas:
     %}
   }
 }
+```
+
+
+### Exposed values
+
+When using `redis-sentinel`, you also have access to the following values. They are exposed, but not exported.
+
+| Name                  | Contents                          |
+|-----------------------|-----------------------------------|
+| `redis.sentinelNodes` | Array of sentinel host:port pairs |

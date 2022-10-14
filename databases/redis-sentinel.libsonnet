@@ -63,7 +63,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
     },
     config: cm.new(cfg.name, {
       'post-init.sh': (|||
-                         if [[ -n "$REDIS_PASSWORD" ]]; then
+                         if [[ -n "${REDIS_PASSWORD-}" ]]; then
                            echo "enabling masterauth"
                            echo "masterauth ${REDIS_PASSWORD}" >> $REDIS_CONF
                            export REDISCLI_AUTH="${REDIS_PASSWORD}"
@@ -79,7 +79,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                            echo "sentinel down-after-milliseconds main 5000" >> $REDIS_CONF
                            echo "sentinel failover-timeout main 60000" >> $REDIS_CONF
                            echo "sentinel parallel-syncs main 1" >> $REDIS_CONF
-                           if [[ -n "$REDIS_PASSWORD" ]]; then
+                           if [[ -n "${REDIS_PASSWORD-}" ]]; then
                              echo "sentinel auth-pass main ${REDIS_PASSWORD}" >> $REDIS_CONF
                              echo "sentinel sentinel-pass ${REDIS_PASSWORD}" >> $REDIS_CONF
                            fi
@@ -202,6 +202,10 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
     serviceMonitor: p.monitoring.v1.serviceMonitor.new(cfg.name)
                     + p.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.hlService.metadata.labels)
                     + p.monitoring.v1.serviceMonitor.spec.withEndpoints([{ targetPort: 9121 }]),
+    sentinelNodes:: [
+      this.sentinels.metadata.name + '-' + i + '.' + this.sentinelService.metadata.name + ':26379'
+      for i in std.range(0, cfg.sentinels - 1)
+    ],
   },
   redis: self.newRedisCluster({}),
 }
