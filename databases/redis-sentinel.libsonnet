@@ -180,7 +180,17 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                     ]) else {}),
                ])
                + statefulset.spec.withServiceName(self.sentinelService.metadata.name)
-               + deployment.configMapVolumeMount(self.config, '/usr/share/container-scripts/redis/post-init.sh', volumeMountMixin={ subPath: 'post-init.sh' }),
+               + statefulset.spec.template.spec.affinity.podAntiAffinity.withRequiredDuringSchedulingIgnoredDuringExecution([
+                 {
+                   labelSelector: {
+                     matchExpressions: [
+                       { key: 'name', operator: 'In', values: [this.sentinels.spec.template.metadata.labels.name] },
+                     ],
+                   },
+                   topologyKey: cfg.topologyKey,
+                 },
+               ])
+               + statefulset.configMapVolumeMount(self.config, '/usr/share/container-scripts/redis/post-init.sh', volumeMountMixin={ subPath: 'post-init.sh' }),
     hlService: k.util.serviceFor(self.redisCluster)
                + k.core.v1.service.metadata.withName(cfg.name + '-hl')
                + k.core.v1.service.spec.withPublishNotReadyAddresses(true)
