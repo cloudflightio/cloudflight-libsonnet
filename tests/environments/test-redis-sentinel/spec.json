@@ -1,0 +1,13 @@
+{
+  "apiVersion": "tanka.dev/v1alpha1",
+  "kind": "Environment",
+  "metadata": {
+    "name": "environments/test-redis-cluster"
+  },
+  "spec": {
+    "apiServer": "https://openshift-dev.internal.cloudflight.io:6443",
+    "namespace": "webner",
+    "resourceDefaults": {},
+    "expectVersions": {}
+  }
+}
