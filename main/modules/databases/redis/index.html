@@ -702,6 +702,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#high-availability" class="md-nav__link">
+    High Availability
+  </a>
+  
+    <nav class="md-nav" aria-label="High Availability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposed-values" class="md-nav__link">
+    Exposed values
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -832,6 +852,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#high-availability" class="md-nav__link">
+    High Availability
+  </a>
+  
+    <nav class="md-nav" aria-label="High Availability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposed-values" class="md-nav__link">
+    Exposed values
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -897,13 +937,59 @@ allows you to create multiple instances without polluting the global scope.</p>
 <a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span><span class="nx">cacheTwo</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="k">import</span><span class="w"> </span><span class="s1">&#39;cloudflight-libsonnet/databases/redis.libsonnet&#39;</span><span class="p">).</span><span class="nx">newRedis</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">_config</span><span class="p">.</span><span class="nx">cacheTwo</span><span class="p">),</span><span class="w"></span>
 <a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span><span class="w"></span>
 </code></pre></div>
+<h2 id="high-availability">High Availability</h2>
+<p>If required, you can instead import the <code>redis-sentinel</code> module. This creates an
+additional sentinel deployment which fails over the master and replicas:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">(</span><span class="k">import</span><span class="w"> </span><span class="s1">&#39;cloudflight-libsonnet/databases/redis-sentinel.libsonnet&#39;</span><span class="p">)</span><span class="w"></span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="o">+</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nx">_config</span><span class="o">+:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="nx">redis</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;redis&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">          </span><span class="nx">replicas</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">          </span><span class="nx">sentinels</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">          </span><span class="nx">image</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;quay.io/fedora/redis-6:20221012&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">          </span><span class="nx">exporterImage</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;docker.io/oliver006/redis_exporter:v1.43.0&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">          </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="s1">&#39;cfg.password must either be defined or set to null&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">          </span><span class="nx">topologyKey</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;kubernetes.io/hostname&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">          </span><span class="nx">storage</span><span class="o">:</span><span class="w"> </span><span class="kt">null</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">          </span><span class="nx">resources</span><span class="o">::</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">            </span><span class="nx">limits</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">              </span><span class="nx">cpu</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;100m&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">              </span><span class="nx">memory</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;2Gi&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">            </span><span class="p">},</span><span class="w"></span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">            </span><span class="nx">requests</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">              </span><span class="nx">cpu</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;50m&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">              </span><span class="nx">memory</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;1Gi&#39;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">            </span><span class="p">},</span><span class="w"></span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">          </span><span class="p">},</span><span class="w"></span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">        </span><span class="p">},</span><span class="w"></span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<h3 id="exposed-values">Exposed values</h3>
+<p>When using <code>redis-sentinel</code>, you also have access to the following values. They are exposed, but not exported.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>redis.sentinelNodes</code></td>
+<td>Array of sentinel host:port pairs</td>
+</tr>
+</tbody>
+</table>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      2022-07-29
+      2022-10-14
     
   </small>
 </div>
