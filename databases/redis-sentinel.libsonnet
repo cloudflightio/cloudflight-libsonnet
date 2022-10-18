@@ -125,6 +125,31 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                     + (if cfg.storage != null then container.withVolumeMounts([
                          volumeMount.new(name='data', mountPath='/var/lib/redis/data'),
                        ]) else {}),
+                    container.new(name='exporter', image=cfg.exporterImage)
+                    + container.withEnvMap({
+                      REDIS_ADDR: 'redis://127.0.0.1:6379',
+                    })
+                    + (if cfg.password != null then container.withEnvFrom([
+                         {
+                           secretRef: { name: this.optionals.secret.metadata.name },
+                         },
+                       ]) else {})
+                    + container.withPorts([
+                      port.new('metrics', 9121),
+                    ])
+                    + container.readinessProbe.withFailureThreshold(5)
+                    + container.readinessProbe.withInitialDelaySeconds(30)
+                    + container.readinessProbe.withPeriodSeconds(10)
+                    + container.readinessProbe.withSuccessThreshold(1)
+                    + container.readinessProbe.withTimeoutSeconds(1)
+                    + container.readinessProbe.httpGet.withPath('/')
+                    + container.readinessProbe.httpGet.withPort(9121)
+                    + container.livenessProbe.withFailureThreshold(5)
+                    + container.livenessProbe.withInitialDelaySeconds(30)
+                    + container.livenessProbe.withPeriodSeconds(10)
+                    + container.livenessProbe.withSuccessThreshold(1)
+                    + container.livenessProbe.withTimeoutSeconds(1)
+                    + container.livenessProbe.tcpSocket.withPort(9121),
                   ])
                   + statefulset.spec.template.spec.affinity.podAntiAffinity.withRequiredDuringSchedulingIgnoredDuringExecution([
                     {
