@@ -86,6 +86,11 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   + container.withPorts([
                     port.new('metrics', 9121),
                   ])
+                  + (if cfg.password != null then container.withEnvFrom([
+                       {
+                         secretRef: { name: this.optionals.secret.metadata.name },
+                       },
+                     ]) else {})
                   + container.readinessProbe.withFailureThreshold(5)
                   + container.readinessProbe.withInitialDelaySeconds(30)
                   + container.readinessProbe.withPeriodSeconds(10)
