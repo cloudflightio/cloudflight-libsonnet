@@ -125,6 +125,31 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                     + (if cfg.storage != null then container.withVolumeMounts([
                          volumeMount.new(name='data', mountPath='/var/lib/redis/data'),
                        ]) else {}),
+                    container.new(name='exporter', image=cfg.exporterImage)
+                    + container.withEnvMap({
+                      REDIS_ADDR: 'redis://127.0.0.1:6379',
+                    })
+                    + (if cfg.password != null then container.withEnvFrom([
+                         {
+                           secretRef: { name: this.optionals.secret.metadata.name },
+                         },
+                       ]) else {})
+                    + container.withPorts([
+                      port.new('metrics', 9121),
+                    ])
+                    + container.readinessProbe.withFailureThreshold(5)
+                    + container.readinessProbe.withInitialDelaySeconds(30)
+                    + container.readinessProbe.withPeriodSeconds(10)
+                    + container.readinessProbe.withSuccessThreshold(1)
+                    + container.readinessProbe.withTimeoutSeconds(1)
+                    + container.readinessProbe.httpGet.withPath('/')
+                    + container.readinessProbe.httpGet.withPort(9121)
+                    + container.livenessProbe.withFailureThreshold(5)
+                    + container.livenessProbe.withInitialDelaySeconds(30)
+                    + container.livenessProbe.withPeriodSeconds(10)
+                    + container.livenessProbe.withSuccessThreshold(1)
+                    + container.livenessProbe.withTimeoutSeconds(1)
+                    + container.livenessProbe.tcpSocket.withPort(9121),
                   ])
                   + statefulset.spec.template.spec.affinity.podAntiAffinity.withRequiredDuringSchedulingIgnoredDuringExecution([
                     {
@@ -144,7 +169,12 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                       + pvc.spec.withAccessModes('ReadWriteOnce')
                       + pvc.spec.resources.withRequests({ storage: cfg.storage }),
                     ]
-                  else []),
+                  else [])
+                  + statefulset.metadata.withLabelsMixin({
+                    'app.kubernetes.io/component': 'server',
+                    'app.kubernetes.io/part-of': cfg.name,
+                    'app.openshift.io/runtime': 'redis',
+                  }),
     sentinels: statefulset.new(name=cfg.name + '-sentinel', replicas=cfg.sentinels, containers=[
                  container.new(name='sentinel', image=cfg.image)
                  + container.withPorts([
@@ -190,7 +220,12 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                    topologyKey: cfg.topologyKey,
                  },
                ])
-               + statefulset.configMapVolumeMount(self.config, '/usr/share/container-scripts/redis/post-init.sh', volumeMountMixin={ subPath: 'post-init.sh' }),
+               + statefulset.configMapVolumeMount(self.config, '/usr/share/container-scripts/redis/post-init.sh', volumeMountMixin={ subPath: 'post-init.sh' })
+               + statefulset.metadata.withLabelsMixin({
+                 'app.kubernetes.io/component': 'sentinel',
+                 'app.kubernetes.io/part-of': cfg.name,
+                 'app.openshift.io/runtime': 'redis',
+               }),
     hlService: k.util.serviceFor(self.redisCluster)
                + k.core.v1.service.metadata.withName(cfg.name + '-hl')
                + k.core.v1.service.spec.withPublishNotReadyAddresses(true)

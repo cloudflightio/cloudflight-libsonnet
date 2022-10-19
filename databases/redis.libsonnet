@@ -86,6 +86,11 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   + container.withPorts([
                     port.new('metrics', 9121),
                   ])
+                  + (if cfg.password != null then container.withEnvFrom([
+                       {
+                         secretRef: { name: this.optionals.secret.metadata.name },
+                       },
+                     ]) else {})
                   + container.readinessProbe.withFailureThreshold(5)
                   + container.readinessProbe.withInitialDelaySeconds(30)
                   + container.readinessProbe.withPeriodSeconds(10)
@@ -105,7 +110,11 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                      + deployment.spec.template.spec.withVolumes([
                        volume.fromPersistentVolumeClaim('data', self.optionals.volume.metadata.name),
                      ])
-                   ) else {}),
+                   ) else {})
+                + deployment.metadata.withLabelsMixin({
+                  'app.openshift.io/runtime': 'redis',
+                  'app.kubernetes.io/part-of': cfg.name,
+                }),
     service: k.util.serviceFor(self.deployment),
     serviceMonitor: p.monitoring.v1.serviceMonitor.new(cfg.name)
                     + p.monitoring.v1.serviceMonitor.spec.selector.withMatchLabels(self.service.metadata.labels)
