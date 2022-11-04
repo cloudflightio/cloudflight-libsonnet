@@ -63,8 +63,7 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
            + (if actuatorPort != port then container.withPortsMixin([p.new('actuator', actuatorPort)]) else {})
            + container.withEnvMap({
              SPRING_PROFILES_ACTIVE: 'kubernetes',
-           })
-           + container.withEnvMap(env)
+           } + env)
            + container.resources.withRequests({
              cpu: '100m',
              memory: '1Gi',
