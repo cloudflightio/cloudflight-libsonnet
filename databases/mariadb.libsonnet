@@ -50,6 +50,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
               MYSQL_DATABASE: cfg.database,
               MYSQL_EXPORTER_PASSWORD: cfg.exporter_password,
               DATA_SOURCE_NAME: self.MYSQL_USER + ':' + self.MYSQL_PASSWORD + '@(127.0.0.1:3306)/',
+              EXPORTER_DATA_SOURCE_NAME: 'exporter:' + self.MYSQL_EXPORTER_PASSWORD + '@(127.0.0.1:3306)/',
             }),
     initScripts: cm.new(cfg.name + '-init', data={
       'init.sql': |||
@@ -123,7 +124,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   ])
                   + container.withEnv([{
                     name: 'DATA_SOURCE_NAME',
-                    valueFrom: { secretKeyRef: { name: this.secret.metadata.name, key: 'DATA_SOURCE_NAME' } },
+                    valueFrom: { secretKeyRef: { name: this.secret.metadata.name, key: 'EXPORTER_DATA_SOURCE_NAME' } },
                   }])
                   + container.withPorts([
                     port.new('metrics', 9104),
