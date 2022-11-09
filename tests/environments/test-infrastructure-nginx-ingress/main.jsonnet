@@ -1,7 +1,7 @@
 (import 'cloudflight-libsonnet/infrastructure/nginx-ingress/nginx-ingress.libsonnet') +
 {
   _config+:: {
-    nginxingress: {
+    nginxingress+: {
       loadBalancerIP: '1.1.1.0',
     },
     nginxingress1: {
