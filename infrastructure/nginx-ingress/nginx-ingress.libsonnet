@@ -7,6 +7,7 @@ local k = (import '../../prelude.libsonnet');
     nginxingress: {
       name: 'nginx-ingress',
       loadBalancerIP: error 'you need a static loadbalancer (public ip)',
+      replicas: 2,
     },
     // end_config
   },
@@ -24,6 +25,7 @@ local k = (import '../../prelude.libsonnet');
 
     'deployment-ingress-nginx-controller'+: {
       spec+: {
+        replicas: cfg.replicas,
         template+: {
           spec+: {
             containers: [
