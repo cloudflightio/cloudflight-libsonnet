@@ -111,6 +111,20 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                        volume.fromPersistentVolumeClaim('data', self.optionals.volume.metadata.name),
                      ])
                    ) else {})
+                + deployment.spec.template.spec.withTolerations([
+                  {
+                    key: 'node.kubernetes.io/not-ready',
+                    operator: 'Exists',
+                    effect: 'NoExecute',
+                    tolerationSeconds: 60,
+                  },
+                  {
+                    key: 'node.kubernetes.io/unreachable',
+                    operator: 'Exists',
+                    effect: 'NoExecute',
+                    tolerationSeconds: 30,
+                  },
+                ])
                 + deployment.metadata.withLabelsMixin({
                   'app.openshift.io/runtime': 'redis',
                   'app.kubernetes.io/part-of': cfg.name,
