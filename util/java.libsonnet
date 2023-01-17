@@ -81,18 +81,27 @@ local d = import 'github.com/jsonnet-libs/docsonnet/doc-util/main.libsonnet';
         '#new': d.fn(|||
           constructs a deployment using the java container. If you need more control, construct this deployment yourself.
 
-          The `runtime` and `component` parameters are used to prefill reccomended labels
+          `containerMixin` can be used to modify the application container. For example:
+          ```
+          deployment.new(/*...*/,
+            containerMixin=k.core.v1.container.livenessProbe.withInitialDelaySeconds(60))
+          ```
+          increases the initial delay seconds of the default liveness probe.
+
+          The `runtime` and `component` parameters are used to prefill recommended labels
+
         |||, [
           d.arg('name', d.T.string),
           d.arg('image', d.T.string),
           d.arg('replicas', d.T.number, 1),
           d.arg('env', d.T.object, {}),
+          d.arg('containerMixin', d.T.object, {}),
           d.arg('runtime', d.T.string, 'spring-boot'),
           d.arg('component', d.T.string, 'backend'),
         ]),
-        new(name, image, replicas=1, env={}, runtime='spring-boot', component='backend'):
+        new(name, image, replicas=1, env={}, containerMixin={}, runtime='spring-boot', component='backend'):
           deployment.new(name, replicas, containers=[
-            k.util.java.container.new(name, image, port=8080, env=env),
+            k.util.java.container.new(name, image, port=8080, env=env) + containerMixin,
           ])
           + deployment.metadata.withLabelsMixin({
             'app.openshift.io/runtime': runtime,
