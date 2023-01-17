@@ -9,7 +9,8 @@ local k = (import 'cloudflight-libsonnet/prelude.libsonnet');
   myApplication: {
     deployment: k.util.java.deployment.new(
       name=$._config.myApplication.name,
-      image=$._config.myApplication.image
+      image=$._config.myApplication.image,
+      containerMixin=k.core.v1.container.livenessProbe.withInitialDelaySeconds(60),
     ),
     service: k.util.serviceFor(self.deployment),
     route: k.util.routeFor(self.service, 'hello.example.com'),
