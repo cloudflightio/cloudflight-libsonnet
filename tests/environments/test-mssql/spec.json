@@ -1,0 +1,13 @@
+{
+  "apiVersion": "tanka.dev/v1alpha1",
+  "kind": "Environment",
+  "metadata": {
+    "name": "environments/test-mssql"
+  },
+  "spec": {
+		"apiServer": "",
+    "namespace": "mssql-test",
+    "resourceDefaults": {},
+    "expectVersions": {}
+  }
+}
