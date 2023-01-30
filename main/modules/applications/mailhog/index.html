@@ -9,17 +9,17 @@
       
       
       
-        <link rel="prev" href="../mailhog/">
+        <link rel="prev" href="../../java_application/">
       
       
-        <link rel="next" href="../../databases/mariadb/">
+        <link rel="next" href="../spring-boot-admin/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.8">
     
     
       
-        <title>Spring Boot Admin - cloudflight-libsonnet</title>
+        <title>Mailhog - cloudflight-libsonnet</title>
       
     
     
@@ -71,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#spring-boot-admin" class="md-skip">
+        <a href="#mailhog" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Spring Boot Admin
+              Mailhog
             
           </span>
         </div>
@@ -620,20 +620,6 @@
               
   
   
-  
-    <li class="md-nav__item">
-      <a href="../mailhog/" class="md-nav__link">
-        Mailhog
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
     
   
   
@@ -645,41 +631,24 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Spring Boot Admin
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
-        Spring Boot Admin
+        Mailhog
       </a>
       
-        
+    </li>
+  
 
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+            
+          
+            
+              
   
   
   
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#integration-and-service-discovery" class="md-nav__link">
-    Integration and Service Discovery
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
+    <li class="md-nav__item">
+      <a href="../spring-boot-admin/" class="md-nav__link">
+        Spring Boot Admin
+      </a>
     </li>
   
 
@@ -870,21 +839,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#integration-and-service-discovery" class="md-nav__link">
-    Integration and Service Discovery
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -902,11 +856,11 @@
 
 
 
-<h1 id="spring-boot-admin">Spring Boot Admin</h1>
+<h1 id="mailhog">Mailhog</h1>
 <p>This module creates an instance of
-<a href="https://github.com/codecentric/spring-boot-admin">spring-boot-admin</a>,
-preconfigured to discover endpoints via Kubernetes.</p>
-<p>The following snippets lists all available configuration options alongside their default values:</p>
+<a href="https://github.com/mailhog/MailHog">mailhog</a>. Data is stored in memory only so
+messages will disappear after a pod restart.</p>
+<p>The following snippet lists all available configuration options alongside their default values:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">(</span><span class="k">import</span><span class="w"> </span><span class="s1">&#39;cloudflight-libsonnet/applications/spring-boot-admin.libsonnet&#39;</span><span class="p">)</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">+</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nx">_config</span><span class="o">+:</span><span class="w"> </span><span class="p">{</span>
@@ -946,18 +900,13 @@ preconfigured to discover endpoints via Kubernetes.</p>
 <a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">  </span><span class="p">}</span>
 <a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="p">}</span>
 </code></pre></div>
-<h2 id="integration-and-service-discovery">Integration and Service Discovery</h2>
-<p>When using our <a href="../../java_application/">java helpers</a>, spring-boot-admin will
-automatically discover provided services and their respective actuator
-endpoints.</p>
-<p>To customize the discovery, modify <code>$._config.springBootAdmin.config.spring.cloud.kubernetes.discovery</code> to match your labels.</p>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      2022-07-26
+      2023-01-30
     
   </small>
 </div>
