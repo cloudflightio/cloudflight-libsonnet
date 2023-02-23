@@ -10,6 +10,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
       password: error 'cfg.password must be defined',
       database: self.user,
       image: 'registry.redhat.io/rhel9/mariadb-105:1-105',
+      datadirAction: 'upgrade-warn',  // use 'upgrade-auto' to enable auto-upgrade when going to newer MariaDB version
       exporterImage: 'docker.io/prom/mysqld-exporter:v0.14.0',
       exporter_password: std.md5(self.password),
       resources:: {
@@ -95,7 +96,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   + container.withEnvMap({
                     MYSQL_DATABASE: cfg.database,
                     MYSQL_LOWER_CASE_TABLE_NAMES: '1',
-                    MYSQL_DATADIR_ACTION: "upgrade-auto",
+                    MYSQL_DATADIR_ACTION: cfg.datadirAction,
                   })
                   + container.withEnvFrom([
                     {
