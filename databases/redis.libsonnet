@@ -91,6 +91,8 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                          secretRef: { name: this.optionals.secret.metadata.name },
                        },
                      ]) else {})
+                  + container.resources.withRequests({ cpu: '10m', memory: '32Mi' })
+                  + container.resources.withLimits({ cpu: '50m', memory: '64Mi' })
                   + container.readinessProbe.withFailureThreshold(5)
                   + container.readinessProbe.withInitialDelaySeconds(30)
                   + container.readinessProbe.withPeriodSeconds(10)
