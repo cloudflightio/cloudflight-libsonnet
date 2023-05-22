@@ -9,7 +9,7 @@ local k = import '../prelude.libsonnet';
       resources:: {
         limits: {
           cpu: '20m',
-          memory: '128Mi',
+          memory: '64Mi',
         },
         requests: {
           cpu: '10m',
