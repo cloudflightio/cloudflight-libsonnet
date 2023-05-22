@@ -15,7 +15,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
       resources:: {
         limits: {
           cpu: '100m',
-          memory: '2Gi',
+          memory: '1Gi',
         },
         requests: {
           cpu: '50m',
@@ -201,7 +201,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                  })
                  + container.resources.withLimits({
                    cpu: '50m',
-                   memory: '128Mi',
+                   memory: '64Mi',
                  })
                  + (if cfg.password != null then container.withEnvFrom([
                       {

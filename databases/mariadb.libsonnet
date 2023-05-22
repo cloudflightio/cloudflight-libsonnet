@@ -16,7 +16,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
       resources:: {
         limits: {
           cpu: '500m',
-          memory: '2Gi',
+          memory: '1Gi',
         },
         requests: {
           cpu: '200m',
@@ -137,7 +137,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   })
                   + container.resources.withLimits({
                     cpu: '100m',
-                    memory: '128Mi',
+                    memory: '32Mi',
                   })
                   + container.readinessProbe.withFailureThreshold(5)
                   + container.readinessProbe.withInitialDelaySeconds(30)

@@ -198,6 +198,9 @@
                   'ephemeral-storage': '256Mi',
                   memory: '256Mi',
                 },
+                limits: {
+                  memory: '256Mi',
+                },
               },
               securityContext: {
                 allowPrivilegeEscalation: false,
