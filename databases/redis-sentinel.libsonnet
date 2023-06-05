@@ -137,6 +137,8 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                     + container.withPorts([
                       port.new('metrics', 9121),
                     ])
+                    + container.resources.withRequests({ cpu: '10m', memory: '32Mi' })
+                    + container.resources.withLimits({ cpu: '50m', memory: '32Mi' })
                     + container.readinessProbe.withFailureThreshold(5)
                     + container.readinessProbe.withInitialDelaySeconds(30)
                     + container.readinessProbe.withPeriodSeconds(10)
