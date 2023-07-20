@@ -1,0 +1,2 @@
+*.jsonnet text=auto eol=lf 
+*.libsonnet text=auto eol=lf 
