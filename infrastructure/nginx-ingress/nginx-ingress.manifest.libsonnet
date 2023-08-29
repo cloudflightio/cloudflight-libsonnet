@@ -7,7 +7,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx',
     },
@@ -23,6 +23,18 @@
           'pods',
           'secrets',
           'namespaces',
+        ],
+        verbs: [
+          'list',
+          'watch',
+        ],
+      },
+      {
+        apiGroups: [
+          'coordination.k8s.io',
+        ],
+        resources: [
+          'leases',
         ],
         verbs: [
           'list',
@@ -102,6 +114,19 @@
           'watch',
         ],
       },
+      {
+        apiGroups: [
+          'discovery.k8s.io',
+        ],
+        resources: [
+          'endpointslices',
+        ],
+        verbs: [
+          'list',
+          'watch',
+          'get',
+        ],
+      },
     ],
   },
   'clusterrole-ingress-nginx-admission': {
@@ -113,7 +138,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission',
     },
@@ -140,7 +165,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx',
     },
@@ -166,7 +191,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission',
     },
@@ -195,7 +220,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-controller',
       namespace: 'ingress-nginx',
@@ -210,7 +235,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-controller',
       namespace: 'ingress-nginx',
@@ -231,6 +256,8 @@
             'app.kubernetes.io/component': 'controller',
             'app.kubernetes.io/instance': 'ingress-nginx',
             'app.kubernetes.io/name': 'ingress-nginx',
+            'app.kubernetes.io/part-of': 'ingress-nginx',
+            'app.kubernetes.io/version': '1.8.1',
           },
         },
         spec: {
@@ -239,7 +266,7 @@
               args: [
                 '/nginx-ingress-controller',
                 '--publish-service=$(POD_NAMESPACE)/ingress-nginx-controller',
-                '--election-id=ingress-controller-leader',
+                '--election-id=ingress-nginx-leader',
                 '--controller-class=k8s.io/ingress-nginx',
                 '--ingress-class=nginx',
                 '--configmap=$(POD_NAMESPACE)/ingress-nginx-controller',
@@ -269,7 +296,7 @@
                   value: '/usr/local/lib/libmimalloc.so',
                 },
               ],
-              image: 'k8s.gcr.io/ingress-nginx/controller:v1.2.0@sha256:d8196e3bc1e72547c5dec66d6556c0ff92a23f6d0919b206be170bc90d5f9185',
+              image: 'registry.k8s.io/ingress-nginx/controller:v1.8.1@sha256:e5c4824e7375fcf2a393e1c03c293b69759af37a9ca6abdb91b13d78a93da8bd',
               imagePullPolicy: 'IfNotPresent',
               lifecycle: {
                 preStop: {
@@ -376,7 +403,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'nginx',
     },
@@ -393,7 +420,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission-create',
       namespace: 'ingress-nginx',
@@ -406,7 +433,7 @@
             'app.kubernetes.io/instance': 'ingress-nginx',
             'app.kubernetes.io/name': 'ingress-nginx',
             'app.kubernetes.io/part-of': 'ingress-nginx',
-            'app.kubernetes.io/version': '1.2.0',
+            'app.kubernetes.io/version': '1.8.1',
           },
           name: 'ingress-nginx-admission-create',
         },
@@ -429,7 +456,7 @@
                   },
                 },
               ],
-              image: 'k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660',
+              image: 'registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20230407@sha256:543c40fd093964bc9ab509d3e791f9989963021f1e9e4c9c7b6700b02bfb227b',
               imagePullPolicy: 'IfNotPresent',
               name: 'create',
               securityContext: {
@@ -460,7 +487,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission-patch',
       namespace: 'ingress-nginx',
@@ -473,7 +500,7 @@
             'app.kubernetes.io/instance': 'ingress-nginx',
             'app.kubernetes.io/name': 'ingress-nginx',
             'app.kubernetes.io/part-of': 'ingress-nginx',
-            'app.kubernetes.io/version': '1.2.0',
+            'app.kubernetes.io/version': '1.8.1',
           },
           name: 'ingress-nginx-admission-patch',
         },
@@ -498,7 +525,7 @@
                   },
                 },
               ],
-              image: 'k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660',
+              image: 'registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20230407@sha256:543c40fd093964bc9ab509d3e791f9989963021f1e9e4c9c7b6700b02bfb227b',
               imagePullPolicy: 'IfNotPresent',
               name: 'patch',
               securityContext: {
@@ -540,7 +567,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx',
       namespace: 'ingress-nginx',
@@ -625,13 +652,13 @@
       },
       {
         apiGroups: [
-          '',
+          'coordination.k8s.io',
         ],
         resourceNames: [
-          'ingress-controller-leader',
+          'ingress-nginx-leader',
         ],
         resources: [
-          'configmaps',
+          'leases',
         ],
         verbs: [
           'get',
@@ -640,10 +667,10 @@
       },
       {
         apiGroups: [
-          '',
+          'coordination.k8s.io',
         ],
         resources: [
-          'configmaps',
+          'leases',
         ],
         verbs: [
           'create',
@@ -661,6 +688,19 @@
           'patch',
         ],
       },
+      {
+        apiGroups: [
+          'discovery.k8s.io',
+        ],
+        resources: [
+          'endpointslices',
+        ],
+        verbs: [
+          'list',
+          'watch',
+          'get',
+        ],
+      },
     ],
   },
   'role-ingress-nginx-admission': {
@@ -672,7 +712,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission',
       namespace: 'ingress-nginx',
@@ -701,7 +741,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx',
       namespace: 'ingress-nginx',
@@ -728,7 +768,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission',
       namespace: 'ingress-nginx',
@@ -755,13 +795,17 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-controller',
       namespace: 'ingress-nginx',
     },
     spec: {
       externalTrafficPolicy: 'Local',
+      ipFamilies: [
+        'IPv4',
+      ],
+      ipFamilyPolicy: 'SingleStack',
       ports: [
         {
           appProtocol: 'http',
@@ -795,7 +839,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-controller-admission',
       namespace: 'ingress-nginx',
@@ -827,7 +871,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx',
       namespace: 'ingress-nginx',
@@ -842,7 +886,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission',
       namespace: 'ingress-nginx',
@@ -857,7 +901,7 @@
         'app.kubernetes.io/instance': 'ingress-nginx',
         'app.kubernetes.io/name': 'ingress-nginx',
         'app.kubernetes.io/part-of': 'ingress-nginx',
-        'app.kubernetes.io/version': '1.2.0',
+        'app.kubernetes.io/version': '1.8.1',
       },
       name: 'ingress-nginx-admission',
     },
