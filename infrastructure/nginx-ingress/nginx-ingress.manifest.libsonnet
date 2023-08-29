@@ -327,9 +327,6 @@
                   cpu: '100m',
                   memory: '90Mi',
                 },
-                limits: {
-                  memory: '90Mi',
-                },
               },
               securityContext: {
                 allowPrivilegeEscalation: true,
