@@ -1,2 +1,3 @@
 *.jsonnet text=auto eol=lf 
 *.libsonnet text=auto eol=lf 
+*.river text=auto eol=lf 
