@@ -6,7 +6,9 @@ local k = (import '../../prelude.libsonnet');
     // begin_config
     nginxingress: {
       name: 'nginx-ingress',
-      loadBalancerIP: error 'you need a static loadbalancer (public ip)',
+      type: 'external',
+      loadBalancerIP: error 'you need a static loadbalancer ip (public IP for external, internal IP for internal)',
+      internalSubnetAzure: null,
       replicas: 2,
     },
     // end_config
@@ -17,9 +19,17 @@ local k = (import '../../prelude.libsonnet');
     local this = self,
     local cfg = $._config.nginxingress + config,
 
-    'service-ingress-nginx-controller'+: {
+    'service-ingress-nginx-controller'+: if cfg.type == 'external' then {
       spec+: {
         loadBalancerIP: cfg.loadBalancerIP,
+      },
+    } else if cfg.type == 'internal-azure' then {
+      metadata+: {
+        annotations+: {
+          'service.beta.kubernetes.io/azure-load-balancer-internal': 'true',
+          'service.beta.kubernetes.io/azure-load-balancer-ipv4': cfg.loadBalancerIP,
+          [if cfg.internalSubnetAzure != null then 'service.beta.kubernetes.io/azure-load-balancer-internal-subnet' else null]: cfg.internalSubnetAzure,
+        },
       },
     },
 
