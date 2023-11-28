@@ -24,7 +24,7 @@ local k = (import '../../prelude.libsonnet');
     // https://github.com/google/jsonnet/issues/234#issuecomment-275489855
     local join(a) =
       local notNull(i) = i != null;
-      local maybeFlatten(acc, i) = if std.type(i) == "array" then acc + i else acc + [i];
+      local maybeFlatten(acc, i) = if std.type(i) == 'array' then acc + i else acc + [i];
       std.foldl(maybeFlatten, std.filter(notNull, a), []),
 
     'service-ingress-nginx-controller'+: if cfg.type == 'external' then {
@@ -48,9 +48,10 @@ local k = (import '../../prelude.libsonnet');
           spec+: {
             containers: [
               super.containers[0] {
-                args: join([super.args, 
-                  '--watch-ingress-without-class', 
-                  if cfg.defaultTlsCertificate != null then ['--default-ssl-certificate='+cfg.defaultTlsCertificate]
+                args: join([
+                  super.args,
+                  '--watch-ingress-without-class',
+                  if cfg.defaultTlsCertificate != null then ['--default-ssl-certificate=' + cfg.defaultTlsCertificate],
                 ]),
               },
             ] + super.containers[1:],
