@@ -20,8 +20,8 @@ local k = (import '../../prelude.libsonnet');
         namespaceSelector+: {
           matchExpressions: super.matchExpressions + [
             { key: 'control-plane', operator: 'DoesNotExist' },
-            { key: 'control-plane', operator: 'NotIn', values: ["true"] },
-            { key: 'kubernetes.azure.com/managedby', operator: 'NotIn', values: ["aks"] },
+            { key: 'control-plane', operator: 'NotIn', values: ['true'] },
+            { key: 'kubernetes.azure.com/managedby', operator: 'NotIn', values: ['aks'] },
           ],
         },
       }] + super.webhooks[1:],
