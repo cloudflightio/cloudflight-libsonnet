@@ -20,6 +20,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd tests
+        cat ../jsonnetfile.lock.json > jsonnetfile.lock.json
         jb install
     - name: Run tests
       run: |
