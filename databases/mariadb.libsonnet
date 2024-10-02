@@ -11,7 +11,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
       database: self.user,
       image: 'registry.redhat.io/rhel9/mariadb-105:1-105',
       datadirAction: 'upgrade-warn',  // use 'upgrade-auto' to enable auto-upgrade when going to newer MariaDB version
-      exporterImage: 'docker.io/prom/mysqld-exporter:v0.14.0',
+      exporterImage: 'docker.io/prom/mysqld-exporter:v0.15.1',
       exporter_password: std.md5(self.password),
       resources:: {
         limits: {
@@ -51,7 +51,6 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
               MYSQL_DATABASE: cfg.database,
               MYSQL_EXPORTER_PASSWORD: cfg.exporter_password,
               DATA_SOURCE_NAME: self.MYSQL_USER + ':' + self.MYSQL_PASSWORD + '@(127.0.0.1:3306)/',
-              EXPORTER_DATA_SOURCE_NAME: 'exporter:' + self.MYSQL_EXPORTER_PASSWORD + '@(127.0.0.1:3306)/',
             }),
     initScripts: cm.new(cfg.name + '-init', data={
       'init.sql': |||
@@ -109,6 +108,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   + container.resources.withLimits(cfg.resources.limits),
                   container.new(name='exporter', image=cfg.exporterImage)
                   + container.withArgs([
+                    '--mysqld.username=exporter',
                     '--collect.info_schema.innodb_metrics',
                     '--collect.info_schema.innodb_tablespaces',
                     '--collect.info_schema.innodb_cmp',
@@ -125,8 +125,8 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                     '--collect.info_schema.tables',
                   ])
                   + container.withEnv([{
-                    name: 'DATA_SOURCE_NAME',
-                    valueFrom: { secretKeyRef: { name: this.secret.metadata.name, key: 'EXPORTER_DATA_SOURCE_NAME' } },
+                    name: 'MYSQLD_EXPORTER_PASSWORD',
+                    valueFrom: { secretKeyRef: { name: this.secret.metadata.name, key: 'MYSQL_EXPORTER_PASSWORD' } },
                   }])
                   + container.withPorts([
                     port.new('metrics', 9104),
