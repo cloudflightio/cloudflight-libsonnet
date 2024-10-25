@@ -12,7 +12,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
       image: 'registry.redhat.io/rhel9/mariadb-105:1-105',
       datadirAction: 'upgrade-warn',  // use 'upgrade-auto' to enable auto-upgrade when going to newer MariaDB version
       exporterImage: 'docker.io/prom/mysqld-exporter:v0.15.1',
-      exporter_password: std.md5(self.password),
+      exporterPassword: std.md5(self.password),
       resources:: {
         limits: {
           cpu: '500m',
@@ -49,14 +49,14 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
               MYSQL_USER: cfg.user,
               MYSQL_PASSWORD: cfg.password,
               MYSQL_DATABASE: cfg.database,
-              MYSQL_EXPORTER_PASSWORD: cfg.exporter_password,
+              MYSQL_EXPORTER_PASSWORD: cfg.exporterPassword,
               DATA_SOURCE_NAME: self.MYSQL_USER + ':' + self.MYSQL_PASSWORD + '@(127.0.0.1:3306)/',
             }),
     initScripts: cm.new(cfg.name + '-init', data={
       'init.sql': |||
         CREATE USER IF NOT EXISTS 'exporter'@'127.0.0.1' IDENTIFIED BY '${MYSQL_EXPORTER_PASSWORD}';
         ALTER USER 'exporter'@'127.0.0.1' IDENTIFIED BY '${MYSQL_EXPORTER_PASSWORD}';
-        GRANT SELECT, PROCESS, REPLICATION CLIENT ON *.* TO 'exporter'@'127.0.0.1';
+        GRANT SELECT, PROCESS, REPLICATION CLIENT, SLAVE MONITOR ON *.* TO 'exporter'@'127.0.0.1';
       |||,
       '60-create-exporter-user.sh': |||
         envsubst < /usr/share/container-scripts/mysql/init/init.sql | mysql $mysql_flags
@@ -155,6 +155,10 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   + container.livenessProbe.tcpSocket.withPort(9104),
                 ])
                 + deployment.spec.strategy.withType('Recreate')
+                + deployment.spec.template.metadata.withAnnotations({
+                  'secret-hash': std.md5(std.manifestJson(this.secret.stringData)),
+                  'init-hash': std.md5(std.manifestJson(this.initScripts.data)),
+                })
                 + deployment.spec.template.spec.withVolumes([
                   volume.fromPersistentVolumeClaim('data', self.volume.metadata.name),
                   volume.fromConfigMap('init', self.initScripts.metadata.name),
