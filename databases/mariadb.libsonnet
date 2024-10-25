@@ -109,6 +109,7 @@ local p = import 'github.com/jsonnet-libs/kube-prometheus-libsonnet/0.10/main.li
                   container.new(name='exporter', image=cfg.exporterImage)
                   + container.withArgs([
                     '--mysqld.username=exporter',
+                    '--mysqld.address=127.0.0.1:3306',
                     '--collect.info_schema.innodb_metrics',
                     '--collect.info_schema.innodb_tablespaces',
                     '--collect.info_schema.innodb_cmp',
